@@ -101,7 +101,7 @@
 <meta property="og:image" content="https://segmentfault.com/img/bVMYHg?w=800&h=272">
 <meta property="og:image" content="https://segmentfault.com/img/bVMYHB?w=800&h=86">
 <meta property="og:image" content="https://segmentfault.com/img/bVMYOL?w=800&h=255">
-<meta property="og:updated_time" content="2017-05-15T03:51:18.229Z">
+<meta property="og:updated_time" content="2017-05-15T05:52:22.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Ajax 语法浅析(转)">
 <meta name="twitter:description" content="Ajax简介Ajax全称为“Asynchronous Javascript And XML”， 即“异步JavaScript和XML”的意思。通过Ajax我们可以向服务器发送请求，在不阻塞页面的情况下进行数据交互，也可以理解为异步数据传输。在Ajax的帮助下我们的网页只需局部刷新即可更新数据的显示，减少了不必要的数据量，大大提高了用户体验，缩短了用户等待的时间，使得web应用程序更小、更快，更友好">
@@ -371,9 +371,31 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/08/Ajax/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/08/Ajax/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
+          
+             <span id="/2017/05/08/Ajax/" class="leancloud_visitors" data-flag-title="Ajax 语法浅析(转)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
           
 
           
@@ -394,18 +416,18 @@
       
         <h2 id="Ajax简介"><a href="#Ajax简介" class="headerlink" title="Ajax简介"></a>Ajax简介</h2><p>Ajax全称为“Asynchronous Javascript And XML”， 即“异步JavaScript和XML”的意思。通过Ajax我们可以向服务器发送请求，在不阻塞页面的情况下进行数据交互，也可以理解为异步数据传输。在Ajax的帮助下我们的网页只需局部刷新即可更新数据的显示，减少了不必要的数据量，大大提高了用户体验，缩短了用户等待的时间，使得web应用程序更小、更快，更友好。 当然以上都是司空见惯的内容了，作为一名合格的开发人员基本都再熟悉不过了，这里只为那些刚入门的新手做一个简单的介绍。更多的关于Ajax的简介请移步<a href="http://www.w3school.com.cn/php/php_ajax_intro.asp" target="_blank" rel="external">W3School Ajax</a>进行了解。<br><a id="more"></a></p>
 <h2 id="原生Ajax"><a href="#原生Ajax" class="headerlink" title="原生Ajax"></a>原生Ajax</h2><p>基本上所有现代的浏览器都支持原生Ajax的功能，下面就来详细介绍下利用原生JS我们怎样来发起和处理Ajax请求。</p>
-<h3 id="1-获取XMLHttpRequest对象"><a href="#1-获取XMLHttpRequest对象" class="headerlink" title="1.获取XMLHttpRequest对象"></a>1.获取XMLHttpRequest对象</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var xhr = new XMLHttpRequest();  //获取浏览器内置的XMLHttpRequest对象</div></pre></td></tr></table></figure>
-<p>如果你的项目应用不考虑低版本IE，那么可以直接用上面的方法，所有现代浏览器 (Firefox、Chrome、Safari 以及 Opera) 都内建了 XMLHttpRequest 对象。如果需要兼容老版本IE（IE5、IE6），那么可以使用ActiveXObject对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var xhr;</div><div class="line">if (window.XMLHttpRequest) &#123;</div><div class="line">    xhr = new XMLHttpRequest();</div><div class="line">&#125; else if (window.ActiveXObject) &#123;</div><div class="line">    xhr = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="2-参数配置"><a href="#2-参数配置" class="headerlink" title="2.参数配置"></a>2.参数配置</h3><p>有了XMLHttpRequest对象，我们还需要配置一些请求的参数信息来完成数据交互，利用open方法即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var xhr;</div><div class="line">if (window.XMLHttpRequest) &#123; </div><div class="line">    xhr = new XMLHttpRequest();</div><div class="line">&#125; else if (window.ActiveXObject) &#123;</div><div class="line">    xhr = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (xhr) &#123;</div><div class="line">    xhr.open(&apos;GET&apos;, &apos;/test/&apos;, true);  //以GET请求的方式向&apos;/test/&apos;路径发送异步请求</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="1-获取XMLHttpRequest对象"><a href="#1-获取XMLHttpRequest对象" class="headerlink" title="1.获取XMLHttpRequest对象"></a>1.获取XMLHttpRequest对象</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();  <span class="comment">//获取浏览器内置的XMLHttpRequest对象</span></div></pre></td></tr></table></figure>
+<p>如果你的项目应用不考虑低版本IE，那么可以直接用上面的方法，所有现代浏览器 (Firefox、Chrome、Safari 以及 Opera) 都内建了 XMLHttpRequest 对象。如果需要兼容老版本IE（IE5、IE6），那么可以使用ActiveXObject对象：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xhr;</div><div class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">window</span>.ActiveXObject) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">"Microsoft.XMLHTTP"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="2-参数配置"><a href="#2-参数配置" class="headerlink" title="2.参数配置"></a>2.参数配置</h3><p>有了XMLHttpRequest对象，我们还需要配置一些请求的参数信息来完成数据交互，利用open方法即可：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xhr;</div><div class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123; </div><div class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">window</span>.ActiveXObject) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">"Microsoft.XMLHTTP"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (xhr) &#123;</div><div class="line">    xhr.open(<span class="string">'GET'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);  <span class="comment">//以GET请求的方式向'/test/'路径发送异步请求</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>open方法为我们创建了一个新的http请求，其中第一个参数为请求方式，一般为’GET’或’POST’；第二个参数为请求url；第三个参数为是否异步，默认为true。</p>
-<h3 id="3-发送请求"><a href="#3-发送请求" class="headerlink" title="3.发送请求"></a>3.发送请求</h3><p>配置完了基本参数信息，我们直接调用send方法发送请求，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">var xhr;</div><div class="line">if (window.XMLHttpRequest) &#123;</div><div class="line">    xhr = new XMLHttpRequest();</div><div class="line">&#125; else if (window.ActiveXObject) &#123;</div><div class="line">    xhr = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (xhr) &#123;</div><div class="line">    xhr.open(&apos;GET&apos;, &apos;/test/&apos;, true);  //以GET请求的方式向&apos;/test/&apos;路径发送异步请求</div><div class="line">    xhr.send();  //调用send方法发送请求</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这里需要注意的是如果使用GET方法传递参数，我们可以直接将参数放在url后面，比如’/test/?name=luozh&amp;size=12’;如果使用POST方法，那么我们的参数需要写在send方法里，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">xhr.open(&apos;POST&apos;, &apos;/test/&apos;, true);</div><div class="line">xhr.setRequestHeader(&quot;Content-type&quot;, &quot;application/x-www-form-urlencoded&quot;);  //将请求头设置为表单方式提交</div><div class="line">xhr.send(&apos;name=luozh&amp;size=12&apos;);</div></pre></td></tr></table></figure></p>
+<h3 id="3-发送请求"><a href="#3-发送请求" class="headerlink" title="3.发送请求"></a>3.发送请求</h3><p>配置完了基本参数信息，我们直接调用send方法发送请求，代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xhr;</div><div class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">window</span>.ActiveXObject) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">"Microsoft.XMLHTTP"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (xhr) &#123;</div><div class="line">    xhr.open(<span class="string">'GET'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);  <span class="comment">//以GET请求的方式向'/test/'路径发送异步请求</span></div><div class="line">    xhr.send();  <span class="comment">//调用send方法发送请求</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里需要注意的是如果使用GET方法传递参数，我们可以直接将参数放在url后面，比如’/test/?name=luozh&amp;size=12’;如果使用POST方法，那么我们的参数需要写在send方法里，如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">xhr.open(<span class="string">'POST'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);</div><div class="line">xhr.setRequestHeader(<span class="string">"Content-type"</span>, <span class="string">"application/x-www-form-urlencoded"</span>);  <span class="comment">//将请求头设置为表单方式提交</span></div><div class="line">xhr.send(<span class="string">'name=luozh&amp;size=12'</span>);</div></pre></td></tr></table></figure></p>
 <p>最终会以Form Data的形式传递：<br><img src="https://segmentfault.com/img/bVMYG1?w=800&amp;h=59" alt="Form Data"></p>
-<p>如果不设置请求头，原生Ajax会默认使用Content-Type是’text/plain;charset=UTF-8’的方式发送数据,如果按照上面的参数书写形式，我们最终传输的形式是这样的：<br><img src="https://segmentfault.com/img/bVMYHg?w=800&amp;h=272" alt="Type"><br>显然这并不是服务器期望的数据格式，我们可以这样写：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">xhr.open(&apos;POST&apos;, &apos;/test/&apos;, true);</div><div class="line">xhr.send(JSON.stringify(&#123;name: &apos;luozh&apos;, size: 12&#125;));</div></pre></td></tr></table></figure></p>
+<p>如果不设置请求头，原生Ajax会默认使用Content-Type是’text/plain;charset=UTF-8’的方式发送数据,如果按照上面的参数书写形式，我们最终传输的形式是这样的：<br><img src="https://segmentfault.com/img/bVMYHg?w=800&amp;h=272" alt="Type"><br>显然这并不是服务器期望的数据格式，我们可以这样写：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">xhr.open(<span class="string">'POST'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);</div><div class="line">xhr.send(<span class="built_in">JSON</span>.stringify(&#123;<span class="attr">name</span>: <span class="string">'luozh'</span>, <span class="attr">size</span>: <span class="number">12</span>&#125;));</div></pre></td></tr></table></figure></p>
 <p>最终传输的格式如下：<br><img src="https://segmentfault.com/img/bVMYHB?w=800&amp;h=86" alt="Type"><br>这样我们可以直接传递JSON字符串给后台处理，当然后台也需要进行相应配置。</p>
-<h3 id="4-检测状态"><a href="#4-检测状态" class="headerlink" title="4.检测状态"></a>4.检测状态</h3><p>发送完Ajax请求之后，我们需要针对服务器返回的状态进行监测并进行相应的处理，这里我们需要使用onreadystatechange事件，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">var xhr;</div><div class="line">if (window.XMLHttpRequest) &#123;</div><div class="line">    xhr = new XMLHttpRequest();</div><div class="line">&#125; else if (window.ActiveXObject) &#123;</div><div class="line">    xhr = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</div><div class="line">&#125;</div><div class="line"></div><div class="line">if (xhr) &#123;</div><div class="line">    xhr.open(&apos;GET&apos;, &apos;/test/&apos;, true);    //以GET请求的方式向&apos;/test/&apos;路径发送异步请求</div><div class="line">    xhr.send();    //调用send方法发送请求</div><div class="line">    xhr.onreadystatechange = function () &#123;    //利用onreadystatechange监测状态</div><div class="line">        if (xhr.readyState === 4) &#123;    //readyState为4表示请求响应完成</div><div class="line">            if (xhr.status === 200) &#123;    //status为200表示请求成功</div><div class="line">                console.log(&apos;执行成功&apos;);</div><div class="line">            &#125; else &#123;</div><div class="line">                console.log(&apos;执行出错&apos;);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-检测状态"><a href="#4-检测状态" class="headerlink" title="4.检测状态"></a>4.检测状态</h3><p>发送完Ajax请求之后，我们需要针对服务器返回的状态进行监测并进行相应的处理，这里我们需要使用onreadystatechange事件，代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> xhr;</div><div class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.XMLHttpRequest) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">window</span>.ActiveXObject) &#123;</div><div class="line">    xhr = <span class="keyword">new</span> ActiveXObject(<span class="string">"Microsoft.XMLHTTP"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (xhr) &#123;</div><div class="line">    xhr.open(<span class="string">'GET'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);    <span class="comment">//以GET请求的方式向'/test/'路径发送异步请求</span></div><div class="line">    xhr.send();    <span class="comment">//调用send方法发送请求</span></div><div class="line">    xhr.onreadystatechange = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;    <span class="comment">//利用onreadystatechange监测状态</span></div><div class="line">        <span class="keyword">if</span> (xhr.readyState === <span class="number">4</span>) &#123;    <span class="comment">//readyState为4表示请求响应完成</span></div><div class="line">            <span class="keyword">if</span> (xhr.status === <span class="number">200</span>) &#123;    <span class="comment">//status为200表示请求成功</span></div><div class="line">                <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>上面我们利用onreadystatechange监测状态，并在内部利用readyState获取当前的状态。readyState一共有5个阶段，当其为4时表示响应内容解析完成，可以在客户端调用了。当readyState为4时，我们又通过status来获取状态码，状态码为200时执行成功代码，否则执行出错代码。</p>
-<p>当然，我们可以用onload来代替onreadystatechange等于4的情况，因为onload只在状态为4的时候才被调用，代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xhr.onload = function () &#123;    //调用onload</div><div class="line">    if (xhr.status === 200) &#123;    //status为200表示请求成功</div><div class="line">        console.log(&apos;执行成功&apos;);</div><div class="line">    &#125; else &#123;</div><div class="line">        console.log(&apos;执行出错&apos;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当然，我们可以用onload来代替onreadystatechange等于4的情况，因为onload只在状态为4的时候才被调用，代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">xhr.onload = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;    <span class="comment">//调用onload</span></div><div class="line">    <span class="keyword">if</span> (xhr.status === <span class="number">200</span>) &#123;    <span class="comment">//status为200表示请求成功</span></div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>然而，需要注意的是，IE对onload这个属性的支持并不友好。除了onload还有：</p>
 <ul>
 <li>onloadstart</li>
@@ -415,18 +437,18 @@
 <li>onerror</li>
 <li>onloadend</li>
 </ul>
-<h2 id="其他库框架中的Ajax"><a href="#其他库框架中的Ajax" class="headerlink" title="其他库框架中的Ajax"></a>其他库框架中的Ajax</h2><h3 id="1-jQuery中的Ajax"><a href="#1-jQuery中的Ajax" class="headerlink" title="1.jQuery中的Ajax"></a>1.jQuery中的Ajax</h3><p>jQuery作为一个使用人数最多的库，其Ajax很好的封装了原生Ajax的代码，在兼容性和易用性方面都做了很大的提高，让Ajax的调用变得非常简单。下面便是一段简单的jQuery的Ajax代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">    method: &apos;GET&apos;,    //1.9.0版本之前用&apos;type&apos;</div><div class="line">    url: &apos;/test/&apos;,</div><div class="line">    dataType: &apos;json&apos;</div><div class="line">&#125;).done(function() &#123;</div><div class="line">    console.log(&apos;执行成功&apos;);</div><div class="line">&#125;).fail(function() &#123;</div><div class="line">    console.log(&apos;执行出错&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="其他库框架中的Ajax"><a href="#其他库框架中的Ajax" class="headerlink" title="其他库框架中的Ajax"></a>其他库框架中的Ajax</h2><h3 id="1-jQuery中的Ajax"><a href="#1-jQuery中的Ajax" class="headerlink" title="1.jQuery中的Ajax"></a>1.jQuery中的Ajax</h3><p>jQuery作为一个使用人数最多的库，其Ajax很好的封装了原生Ajax的代码，在兼容性和易用性方面都做了很大的提高，让Ajax的调用变得非常简单。下面便是一段简单的jQuery的Ajax代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$.ajax(&#123;</div><div class="line">    <span class="attr">method</span>: <span class="string">'GET'</span>,    <span class="comment">//1.9.0版本之前用'type'</span></div><div class="line">    url: <span class="string">'/test/'</span>,</div><div class="line">    <span class="attr">dataType</span>: <span class="string">'json'</span></div><div class="line">&#125;).done(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">&#125;).fail(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>与原生Ajax不同的是，jQuery中默认的Content-type是’application/x-www-form-urlencoded; charset=UTF-8’, 想了解更多的jQuery Ajax的信息可以移步官方文档：<a href="http://api.jquery.com/jquery.ajax/" target="_blank" rel="external">http://api.jquery.com/jquery….</a></p>
-<h3 id="2-Vue-js中的Ajax"><a href="#2-Vue-js中的Ajax" class="headerlink" title="2.Vue.js中的Ajax"></a>2.Vue.js中的Ajax</h3><p>Vue.js作为目前热门的前端框架，其本身并不包含Ajax功能，而是通过插件的形式额外在项目中引用，其官方推荐的Ajax插件为vue-resource，下面便是vue-resource的请求代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Vue.http.get(&apos;/test/&apos;).then((response) =&gt; &#123;</div><div class="line">    console.log(&apos;执行成功&apos;);</div><div class="line">&#125;, (response) =&gt; &#123;</div><div class="line">    console.log(&apos;执行出错&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="2-Vue-js中的Ajax"><a href="#2-Vue-js中的Ajax" class="headerlink" title="2.Vue.js中的Ajax"></a>2.Vue.js中的Ajax</h3><p>Vue.js作为目前热门的前端框架，其本身并不包含Ajax功能，而是通过插件的形式额外在项目中引用，其官方推荐的Ajax插件为vue-resource，下面便是vue-resource的请求代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Vue.http.get(<span class="string">'/test/'</span>).then(<span class="function">(<span class="params">response</span>) =&gt;</span> &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">&#125;, (response) =&gt; &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>vue-resource支持Promise API，同时支持目前的Firefox, Chrome, Safari, Opera 和 IE9+浏览器，在浏览器兼容性上不兼容IE8，毕竟Vue本身也不兼容IE8。想了解更多的vue-resource的信息可以移步github文档：<a href="http://api.jquery.com/jquery.ajax/" target="_blank" rel="external">https://github.com/pagekit/vu…</a></p>
-<h3 id="3-Angular-js中的Ajax"><a href="#3-Angular-js中的Ajax" class="headerlink" title="3.Angular.js中的Ajax"></a>3.Angular.js中的Ajax</h3><p>这里Angular.js中的Ajax主要指Angular的1.×版本，因为Angular2目前还不建议在生产环境中使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var myApp = angular.module(&apos;myApp&apos;, []);</div><div class="line">var myCtrl = myApp.controller(&apos;myCtrl&apos;, [&apos;$scope&apos;,&apos;$http&apos;,function($scope, $http)&#123;</div><div class="line">    $http(&#123;</div><div class="line">        method: &apos;GET&apos;,</div><div class="line">        url: &apos;/test/&apos;,</div><div class="line">        headers: &#123;&apos;Content-Type&apos;: &apos;application/x-www-form-urlencoded; charset=UTF-8&apos;&#125;  </div><div class="line">    &#125;).success(function (data) &#123;</div><div class="line">        console.log(&apos;执行成功&apos;);</div><div class="line">    &#125;).error(function () &#123;</div><div class="line">        console.log(&apos;执行出错&apos;);</div><div class="line">    &#125;);</div><div class="line">&#125;]);</div></pre></td></tr></table></figure></p>
+<h3 id="3-Angular-js中的Ajax"><a href="#3-Angular-js中的Ajax" class="headerlink" title="3.Angular.js中的Ajax"></a>3.Angular.js中的Ajax</h3><p>这里Angular.js中的Ajax主要指Angular的1.×版本，因为Angular2目前还不建议在生产环境中使用。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myApp = angular.module(<span class="string">'myApp'</span>, []);</div><div class="line"><span class="keyword">var</span> myCtrl = myApp.controller(<span class="string">'myCtrl'</span>, [<span class="string">'$scope'</span>,<span class="string">'$http'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">$scope, $http</span>)</span>&#123;</div><div class="line">    $http(&#123;</div><div class="line">        <span class="attr">method</span>: <span class="string">'GET'</span>,</div><div class="line">        <span class="attr">url</span>: <span class="string">'/test/'</span>,</div><div class="line">        <span class="attr">headers</span>: &#123;<span class="string">'Content-Type'</span>: <span class="string">'application/x-www-form-urlencoded; charset=UTF-8'</span>&#125;  </div><div class="line">    &#125;).success(<span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">    &#125;).error(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">    &#125;);</div><div class="line">&#125;]);</div></pre></td></tr></table></figure></p>
 <p>在Angular中，我们需要在控制器上注册一个$http的事件，然后才能在内部执行Ajax。Angular的Ajax默认的Content-type是’application/json;charset=UTF-8’，所以如果想用表单的方式提交还需设置下headers属性。想了解更多的Angular Ajax的信息可以移步官方文档：<a href="https://docs.angularjs.org/api/ng/service/" target="_blank" rel="external">https://docs.angularjs.org/ap…</a></p>
 <h3 id="4-React中的Ajax"><a href="#4-React中的Ajax" class="headerlink" title="4.React中的Ajax"></a>4.React中的Ajax</h3><p>在React中我比较推荐使用fetch来请求数据，当然fetch不仅适用于React，在任何一种框架如上面的Vue、Angular中都可以使用，因为fetch已经被目前主流浏览器所支持，至于其主要功能和用法，我在下面会做下讲解。</p>
 <h2 id="Fetch-API"><a href="#Fetch-API" class="headerlink" title="Fetch API"></a>Fetch API</h2><p>Fetch API 是基于 Promise 设计，由于Promise的浏览器兼容性问题及Fetch API本身的兼容问题，一些浏览器暂时不支持Fetch API，浏览器兼容图如下：</p>
 <p><img src="https://segmentfault.com/img/bVMYOL?w=800&amp;h=255" alt="Fetch"></p>
 <p>当然我们可以通过使用一些插件来解决兼容性问题，比如：fetch-polyfill、es6-promise、fetch-ie8等。</p>
-<p>使用Fetch我们可以非常便捷的编写Ajax请求，我们用原生的XMLHttpRequst对象和Fetch来比较一下：<br><strong>XMLHttpRequst API</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// XMLHttpRequst API</div><div class="line">var xhr = new XMLHttpRequest();</div><div class="line">xhr.open(&apos;GET&apos;, &apos;/test/&apos;, true);</div><div class="line"></div><div class="line">xhr.onload = function() &#123;</div><div class="line">    console.log(&apos;执行成功&apos;);</div><div class="line">&#125;;</div><div class="line"></div><div class="line">xhr.onerror = function() &#123;</div><div class="line">    console.log(&apos;执行出错&apos;);</div><div class="line">&#125;;</div><div class="line"></div><div class="line">xhr.send();</div></pre></td></tr></table></figure></p>
-<p><strong>Fetch API</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">fetch(&apos;/test/&apos;).then(function(response) &#123;</div><div class="line">    return response.json();</div><div class="line">&#125;).then(function(data) &#123;</div><div class="line">    console.log(&apos;执行成功&apos;);</div><div class="line">&#125;).catch(function(e) &#123;</div><div class="line">    console.log(&apos;执行出错&apos;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>使用Fetch我们可以非常便捷的编写Ajax请求，我们用原生的XMLHttpRequst对象和Fetch来比较一下：<br><strong>XMLHttpRequst API</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// XMLHttpRequst API</span></div><div class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</div><div class="line">xhr.open(<span class="string">'GET'</span>, <span class="string">'/test/'</span>, <span class="literal">true</span>);</div><div class="line"></div><div class="line">xhr.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line">xhr.onerror = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line">xhr.send();</div></pre></td></tr></table></figure></p>
+<p><strong>Fetch API</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">fetch(<span class="string">'/test/'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> response.json();</div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行成功'</span>);</div><div class="line">&#125;).catch(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'执行出错'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>可以看出使用Fetch后我们的代码更加简洁和语义化，链式调用的方式也使其更加流畅和清晰。随着浏览器内核的不断完善，今后的XMLHttpRequest会逐渐被Fetch替代。关于Fetch的详细介绍可以移步：<a href="https://segmentfault.com/a/1190000003810652" target="_blank" rel="external">传统 Ajax 已死，Fetch 永生</a></p>
 <h2 id="跨域Ajax"><a href="#跨域Ajax" class="headerlink" title="跨域Ajax"></a>跨域Ajax</h2><p>介绍了各种各样的Ajax API，我们不能避免的一个重要问题就是跨域，这里重点讲解下Ajax跨域的处理方式。</p>
 <p>处理Ajax跨域问题主要有以下4种方式：</p>
@@ -440,7 +462,7 @@
 <blockquote>
 <p>利用代理的方式可以这样理解： 通过在同域名下的web服务器端创建一个代理： 北京服务器(域名:www.beijing.com)<br>上海服务器(域名：www.shanghai.com)<br>比如在北京的web服务器的后台(www.beijing.com/proxy-shanghaiservice.php)来调用上海服务器(www.shanghai.com/services.php)的服务，然后再把访问结果返回给前端，这样前端调用北京同域名的服务就和调用上海的服务效果相同了。</p>
 </blockquote>
-<p>利用XMLHttpRequest Level2的方式需要后台将请求头进行相应配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// php语法</div><div class="line">header(&apos;Access-Control-Allow-Origin: *&apos;);</div><div class="line">header(&apos;Access-Control-Allow-Methods: GET,POST&apos;);</div></pre></td></tr></table></figure></p>
+<p>利用XMLHttpRequest Level2的方式需要后台将请求头进行相应配置：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// php语法</span></div><div class="line">header(<span class="string">'Access-Control-Allow-Origin: *'</span>);</div><div class="line">header(<span class="string">'Access-Control-Allow-Methods: GET,POST'</span>);</div></pre></td></tr></table></figure></p>
 <p>以上的号可以替换成允许访问的域名，表示所有域名都可以访问。</p>
 <p>由此可见，第3和第4种方式主要是后台的活，前端只需调用就可以。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>无论Ajax的语法多么多变，无论库和框架如何封装Ajax，其只是一种实现异步数据交互的工具，我们只需理解原生JS中Ajax的实现原理，了解XMLHttpRequest及promise的概念和流程，便可以轻松的在数据异步交互的时代游刃有余。</p>
@@ -513,6 +535,29 @@
 
     <div class="post-spread">
       
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
     </div>
   </div>
 
@@ -523,6 +568,13 @@
 
           
   <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
     
   </div>
 
@@ -603,6 +655,44 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
           
         </div>
 
@@ -770,6 +860,26 @@
 
   
 
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2017/05/08/Ajax/';
+          this.page.identifier = '2017/05/08/Ajax/';
+          this.page.title = 'Ajax 语法浅析(转)';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -818,6 +928,113 @@
 
 
   
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
 
   
 
