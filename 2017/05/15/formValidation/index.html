@@ -1,0 +1,844 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--FormValidation," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta name="keywords" content="--FormValidation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)">
+<meta property="og:url" content="http://ZheningLin.github.io/2017/05/15/formValidation/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="1在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta property="og:image" content="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067">
+<meta property="og:updated_time" content="2017-05-15T03:50:17.818Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)">
+<meta name="twitter:description" content="1在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2017/05/15/formValidation/"/>
+
+
+
+
+
+  <title>探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转) | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/05/15/formValidation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T10:52:53+08:00">
+                2017-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-二级目录/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -二级目录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。</div></pre></td></tr></table></figure>
+<p>假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。</p>
+<ul>
+<li>所有选项不能为空</li>
+<li>用户名长度不能少于6位</li>
+<li>密码长度不能少于6位</li>
+<li>手机号码必须符合格式</li>
+<li>邮箱地址必须符合格式<a id="more"></a>
+注：为简单起见，以下例子以传统的浏览器表单验证，Ajax异步请求不做探讨，浏览器端验证原理图：</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067" alt="Fetch"></p>
+<p>简要说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">这里我们前端只做浏览器端的校验。很多工具可以在表单检验过后、浏览器发送请求前截取表单数据，攻击者可以修改请求中的数据，从而绕过</div><div class="line">JavaScript，将恶意数据注入服务器，这样会增加XSS（全称 Cross Site Scripting）攻击的机率。对于一般的网站，都不赞成采用浏览器端的</div><div class="line">表单验证方法。浏览器端和服务器端双重验证方法在浏览器端验证方法基础上增加服务器端的验证，其原理如图所示，该方法增加服务器端的验证</div><div class="line">，弥补了传统浏览器端验证的缺点。若表单输入不符合要求，浏览器端的 Javascript 验证能很快地给出响应，而服务器端的验证则可以防止恶意</div><div class="line">用户绕过 Javascript 验证，保证最终数据的准确性。</div></pre></td></tr></table></figure></p>
+<p>HTML代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line"> &lt;meta charset=&quot;utf-8&quot;&gt;</div><div class="line"> &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;</div><div class="line"> &lt;title&gt;探索几种表单验证最佳实践方式&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line"> &lt;form action=&quot;http://xxx.com/register&quot; id=&quot;registerForm&quot; method=&quot;post&quot;&gt;</div><div class="line"> &lt;div class=&quot;form-group&quot;&gt;</div><div class="line"> &lt;label for=&quot;user&quot;&gt;请输入用户名:&lt;/label&gt;</div><div class="line"> &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;user&quot; name=&quot;userName&quot;&gt;</div><div class="line"> &lt;/div&gt;</div><div class="line"> &lt;div class=&quot;form-group&quot;&gt;</div><div class="line"> &lt;label for=&quot;pwd&quot;&gt;请输入密码:&lt;/label&gt;</div><div class="line"> &lt;input type=&quot;password&quot; class=&quot;form-control&quot; id=&quot;pwd&quot; name=&quot;passWord&quot;&gt;</div><div class="line"> &lt;/div&gt;</div><div class="line"> &lt;div class=&quot;form-group&quot;&gt;</div><div class="line"> &lt;label for=&quot;phone&quot;&gt;请输入手机号码:&lt;/label&gt;</div><div class="line"> &lt;input type=&quot;tel&quot; class=&quot;form-control&quot; id=&quot;phone&quot; name=&quot;phoneNumber&quot;&gt;</div><div class="line"> &lt;/div&gt;</div><div class="line"> &lt;div class=&quot;form-group&quot;&gt;</div><div class="line"> &lt;label for=&quot;email&quot;&gt;请输入邮箱:&lt;/label&gt;</div><div class="line"> &lt;input type=&quot;text&quot; class=&quot;form-control&quot; id=&quot;email&quot; name=&quot;emailAddress&quot;&gt;</div><div class="line"> &lt;/div&gt;</div><div class="line"> &lt;button type=&quot;button&quot; class=&quot;btn btn-default&quot;&gt;Submit&lt;/button&gt;</div><div class="line"> &lt;/form&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>JavaScript代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">let registerForm = document.querySelector(&apos;#registerForm&apos;)</div><div class="line"> registerForm.addEventListener(&apos;submit&apos;, function() &#123;</div><div class="line"> if (registerForm.userName.value === &apos;&apos;) &#123;</div><div class="line"> alert(&apos;用户名不能为空！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (registerForm.userName.length &lt; 6) &#123;</div><div class="line"> alert(&apos;用户名长度不能少于6位！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (registerForm.passWord.value === &apos;&apos;) &#123;</div><div class="line"> alert(&apos;密码不能为空！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (registerForm.passWord.value.length &lt; 6) &#123;</div><div class="line"> alert(&apos;密码长度不能少于6位！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (registerForm.phoneNumber.value === &apos;&apos;) &#123;</div><div class="line"> alert(&apos;手机号码不能为空！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (!/^1(3|5|7|8|9)[0-9]$/.test(registerForm.phoneNumber.value)) &#123;</div><div class="line"> alert(&apos;手机号码格式不正确！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (registerForm.emailAddress.value === &apos;&apos;) &#123;</div><div class="line"> alert(&apos;邮箱地址不能为空！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> if (!/^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*</div><div class="line"> $/.test(registerForm.emailAddress.value)) &#123;</div><div class="line"> alert(&apos;邮箱地址格式不正确！&apos;)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line"> &#125;, false)</div></pre></td></tr></table></figure></p>
+<h2 id="1、问题"><a href="#1、问题" class="headerlink" title="1、问题"></a>1、问题</h2><p>这样编写代码，的确能够完成业务的需求，能够完成表单的验证，但是存在很多问题，比如：</p>
+<ul>
+<li>registerForm.addEventListener绑定的函数比较庞大，包含了很多的if-else语句，这些语句需要覆盖所有的校验规则。</li>
+<li>registerForm.addEventListener绑定的函数缺乏弹性，如果增加了一种新的校验规则，或者想要把密码的长度校验从6改成8，我们都必须深入registerForm.addEventListener绑定的函数的内部实现，这是违反了开放-封闭原则的。</li>
+<li>算法的复用性差，如果程序中增加了另一个表单，这个表单也需要进行一些类似的校验，那我们很可能将这些校验逻辑复制得漫天遍野。</li>
+</ul>
+<p>所谓办法总比问题多，办法是有的，比如马上要讲解的使用 策略模式 使表单验证更优雅更完美，我相信很多人很抵触设计模式，一听设计模式就觉得很遥远，觉得自己在工作中很少用到设计模式，那么你就错了，特别是JavaScript这种灵活的语言，有的时候你已经在你的代码中使用了设计模式，只是你不知道而已。更多关于设计模式的东西，以后会陆续写博客描述，这里只希望大家抛弃设计模式神秘的感觉，通俗的讲，它无非就是完成一件事情通用的办法而已。</p>
+<h2 id="2、思路"><a href="#2、思路" class="headerlink" title="2、思路"></a>2、思路</h2><p>回到正题，假如我们不想使用过多的 if - else 语句，那么我们心中比较理想的代码编写方式是什么呢？我们能不能像编写配置一样的去做表单验证呢？再来一个”一键验证“的功能，是不是很爽？答案是肯定的，所以我们心中理想的编写代码的方式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">// 获取表单form元素</div><div class="line">let registerForm = document.querySelector(&apos;#registerForm&apos;)</div><div class="line"></div><div class="line">// 创建表单校验实例</div><div class="line">let validator = new Validator();</div><div class="line">// 编写校验配置</div><div class="line">validator.add(registerForm.userName, &apos;isNonEmpty&apos;, &apos;用户名不能为空&apos;)</div><div class="line">validator.add(registerForm.userName, &apos;minLength:6&apos;, &apos;用户名长度不能小于6&apos;)</div><div class="line"></div><div class="line">// 开始校验，并接收错误信息</div><div class="line">let errorMsg = validator.start()</div><div class="line"></div><div class="line">// 如果有错误信息输出，说明校验未通过</div><div class="line">if(errorMsg)&#123;</div><div class="line"> alert(errorMsg)</div><div class="line"> return false//阻止表单提交</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>怎么样？感受感受，是不是看上去优雅多了？好了，有了这些思路，我们就可以向目标迈进了，下一步就要了解了解什么事策略模式了。</p>
+<h2 id="3、策略模式"><a href="#3、策略模式" class="headerlink" title="3、策略模式"></a>3、策略模式</h2><p>策略模式，单纯的看它的名字”策略“，指的是做事情的方法，比如我们想到某个地方旅游，你可以有几种策略供选择：</p>
+<ol>
+<li>飞机，嗖嗖嗖直接就到了，节省时间。</li>
+<li>火车，可以选择高铁出行，专为飞机恐惧症者提供。</li>
+<li>徒步，不失为一个锻炼身体的选择。</li>
+<li>other method……</li>
+</ol>
+<p>在程序设计中，我们也经常遇到类似的情况，要实现一种方案有多种方案可以选择，比如，一个压缩文件的程序，即可选择zip算法，也可以选择gzip算法。</p>
+<p>所以，做一件事你会有很多方法，也就是所谓的策略，而我们今天要讲的策略模式也就是这个意思，它的核心思想是，将做什么和谁去做相分离。所以，一个完整的策略模式要有两个类，一个是策略类，一个是环境类(主要类)，环境类接收请求，但不处理请求，它会把请求委托给策略类，让策略类去处理，而策略类的扩展是很容易的，这样，使得我们的代码易于扩展。 在表单验证的例子中，各种验证的方法组成了策略类，比如：判断是否为空的方法(如：isNonEmpty)，判断最小长度的方法(如：minLength)，判断是否为手机号的方法(isMoblie)等等，他们组成了策略类，供给环境类去委托请求。下面，我们就来实战一下。</p>
+<h2 id="4、用策略模式重构表单校验"><a href="#4、用策略模式重构表单校验" class="headerlink" title="4、用策略模式重构表单校验"></a>4、用策略模式重构表单校验</h2><p>策略模式的组成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> **抽象策略角色**：策略类，通常由一个接口或者抽象类实现。</div><div class="line">**具体策略角色**：包装了相关的算法和行为。</div><div class="line">**环境角色**：持有一个策略类的引用，最终给客户端用的。</div></pre></td></tr></table></figure></p>
+<h3 id="4-1具体策略角色——编写策略类"><a href="#4-1具体策略角色——编写策略类" class="headerlink" title="4.1具体策略角色——编写策略类"></a>4.1具体策略角色——编写策略类</h3><p>策略类很简单，它是由一组验证方法组成的对象，即策略对象，重构表单校验的代码，很显然第一步我们要把这些校验逻辑都封装成策略对象：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">/*策略对象*/</div><div class="line">const strategies = &#123;</div><div class="line"> isNonEmpty(value, errorMsg) &#123;</div><div class="line"> return value === &apos;&apos; ?</div><div class="line"> errorMsg : void 0</div><div class="line"> &#125;,</div><div class="line"> minLength(value, length, errorMsg) &#123;</div><div class="line"> return value.length &lt; length ?</div><div class="line"> errorMsg : void 0</div><div class="line"> &#125;,</div><div class="line"> isMoblie(value, errorMsg) &#123;</div><div class="line"> return !/^1(3|5|7|8|9)[0-9]$/.test(value) ?</div><div class="line"> errorMsg : void 0</div><div class="line"> &#125;,</div><div class="line"> isEmail(value, errorMsg) &#123;</div><div class="line"> return !/^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value) ?</div><div class="line"> errorMsg : void 0</div><div class="line"> &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-2抽象策略角色——编写Validator类"><a href="#4-2抽象策略角色——编写Validator类" class="headerlink" title="4.2抽象策略角色——编写Validator类"></a>4.2抽象策略角色——编写Validator类</h3><p>根据我们的思考，我们使用add方法添加验证配置，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">validator.add(registerForm.userName, &apos;isNonEmpty&apos;, &apos;用户名不能为空&apos;)</div><div class="line">validator.add(registerForm.userName, &apos;minLength:6&apos;, &apos;用户名长度不能小于6&apos;)</div></pre></td></tr></table></figure></p>
+<p>add方法接受三个参数，第一个参数是表单字段，第二个参数是策略对象中策略方法的名字，第三个参数是验证未通过的错误信息。</p>
+<p>然后使用 start 方法开始验证，若验证未通过，返回验证错误信息，如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">let errorMsg = validator.start()</div></pre></td></tr></table></figure></p>
+<p>另外，再解释一下下面这句代码：</p>
+<p>add方法第一个参数我们说过了，是要验证的表单元素，第二个参数是一个字符串，使用 冒号(:) 分割，前面是策略方法名称，后面是传给这个方法的参数，第三个参数仍然是错误信息。</p>
+<p>但是这种参数配置还是有问题，我们的要求是多种校验规则，比如用户名既不能为空，又要满足用户名长度不小于6，并不是单一的，上面的为什么要写两次，这种看着就不舒服，这时候我就需要对配置参数做一点小小的改动，我们用数组来传递多个校验规则：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">validator.add(registerForm.userName, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;用户名不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;minLength:6&apos;,</div><div class="line"> errorMsg: &apos;用户名长度不能小于6位！&apos;</div><div class="line"> &#125;])</div></pre></td></tr></table></figure></p>
+<p>最后是Validator类的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">/*Validator类*/</div><div class="line">class Validator &#123;</div><div class="line"> constructor() &#123;</div><div class="line"> this.cache = [] //保存校验规则</div><div class="line"> &#125;</div><div class="line"> add(dom, rules) &#123;</div><div class="line"> for (let rule of rules) &#123;</div><div class="line"> let strategyAry = rule.strategy.split(&apos;:&apos;) //例如[&apos;minLength&apos;,6]</div><div class="line"> let errorMsg = rule.errorMsg //&apos;用户名不能为空&apos;</div><div class="line"> this.cache.push(() =&gt; &#123;</div><div class="line"> let strategy = strategyAry.shift() //用户挑选的strategy</div><div class="line"> strategyAry.unshift(dom.value) //把input的value添加进参数列表</div><div class="line"> strategyAry.push(errorMsg) //把errorMsg添加进参数列表，[dom.value,6,errorMsg]</div><div class="line"> return strategies[strategy].apply(dom, strategyAry)</div><div class="line"> &#125;)</div><div class="line"> &#125;</div><div class="line"> &#125;</div><div class="line"> start() &#123;</div><div class="line"> for (let validatorFunc of this.cache) &#123;</div><div class="line"> let errorMsg = validatorFunc()//开始校验，并取得校验后的返回信息</div><div class="line"> if (errorMsg) &#123;//r如果有确切返回值，说明校验没有通过</div><div class="line"> return errorMsg</div><div class="line"> &#125;</div><div class="line"> &#125;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="4-3环境角色——客户端调用代码"><a href="#4-3环境角色——客户端调用代码" class="headerlink" title="4.3环境角色——客户端调用代码"></a>4.3环境角色——客户端调用代码</h3><p>使用策略模式重构代码以后，我们仅仅通过‘配置’的方式就可以完成一个表单的校验，这些校验规则也可以复用在程序的任何地方，还能作为插件的形式，方便地被移植到其他项目中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">/*客户端调用代码*/</div><div class="line">let registerForm = document.querySelector(&apos;#registerForm&apos;)</div><div class="line">const validatorFunc = () =&gt; &#123;</div><div class="line"> let validator = new Validator()</div><div class="line"></div><div class="line"> validator.add(registerForm.userName, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;用户名不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;minLength:6&apos;,</div><div class="line"> errorMsg: &apos;用户名长度不能小于6位！&apos;</div><div class="line"> &#125;])</div><div class="line"></div><div class="line"> validator.add(registerForm.passWord, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;密码不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;minLength:&apos;,</div><div class="line"> errorMsg: &apos;密码长度不能小于6位！&apos;</div><div class="line"> &#125;])</div><div class="line"></div><div class="line"> validator.add(registerForm.phoneNumber, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;手机号码不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;isMoblie&apos;,</div><div class="line"> errorMsg: &apos;手机号码格式不正确！&apos;</div><div class="line"> &#125;])</div><div class="line"></div><div class="line"> validator.add(registerForm.emailAddress, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;邮箱地址不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;isEmail&apos;,</div><div class="line"> errorMsg: &apos;邮箱地址格式不正确！&apos;</div><div class="line"> &#125;])</div><div class="line"> let errorMsg = validator.start()</div><div class="line"> return errorMsg</div><div class="line">&#125;</div><div class="line"></div><div class="line">registerForm.addEventListener(&apos;submit&apos;, function() &#123;</div><div class="line"> let errorMsg = validatorFunc()</div><div class="line"> if (errorMsg) &#123;</div><div class="line"> alert(errorMsg)</div><div class="line"> return false</div><div class="line"> &#125;</div><div class="line">&#125;, false)</div></pre></td></tr></table></figure></p>
+<p>在修改某个校验规则的时候，只需要编写或者改写少量的代码。比如我们想要将用户名输入框的校验规则改成用户名不能少于4个字符。可以看到，这时候的修改是毫不费力的。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">validator.add(registerForm.userName, [&#123;</div><div class="line"> strategy: &apos;isNonEmpty&apos;,</div><div class="line"> errorMsg: &apos;用户名不能为空！&apos;</div><div class="line"> &#125;, &#123;</div><div class="line"> strategy: &apos;minLength:4&apos;,</div><div class="line"> errorMsg: &apos;用户名长度不能小于4位！&apos;</div><div class="line"> &#125;])</div></pre></td></tr></table></figure></p>
+<h3 id="4-4策略模式的优缺点"><a href="#4-4策略模式的优缺点" class="headerlink" title="4.4策略模式的优缺点"></a>4.4策略模式的优缺点</h3><ul>
+<li>策略模式利用组合、委托和多态等技术思想，可以有效的避免多种条件选择语句；</li>
+<li>策略模式提供了对开放-封闭原则的完美支持，将算法封装在独立的strategy中，使得它易于切换，易于理解，易于拓展；</li>
+<li>策略模式中的算法也可以复用在系统的其它地方，从而避免了许多重复的复制黏贴的工作；</li>
+<li>在策略模式利用组合和委托来让Context拥有执行算法的能力，这也是继承一种更轻便的替代方案。</li>
+</ul>
+<p>当然，策略模式也有一些缺点，但掌握了策略模式，这些缺点并不严重。</p>
+<ul>
+<li>编写难度加大，代码量变多了，这是最直观的一个缺点，也算不上缺点，毕竟不能完全以代码多少来衡量优劣。</li>
+<li>首先，使用策略模式会在程序中增加许多策略类或者策略对象，但实际上这比把它们负责的逻辑堆砌在Context中要好。</li>
+<li>其次，要使用策略模式，必须了解所有的strategy，必须了解各个strategy之间的不同点，这样才能选择一个合适的strategy。比如，我们要选择一种合适的旅游出行路线，必须先了解选择飞机、火车、自行车等方案的细节。此时strategy要向客户暴露它的所有实现，这是违反最少知识原则的。</li>
+</ul>
+<h3 id="4-5策略模式的意义"><a href="#4-5策略模式的意义" class="headerlink" title="4.5策略模式的意义"></a>4.5策略模式的意义</h3><p>策略模式使开发人员能够开发出由许多可替换的部分组成的软件，并且各个部分之间是弱连接的关系。<br>弱连接的特性使软件具有更强的可扩展性，易于维护；更重要的是，它大大提高了软件的可重用性。</p>
+<h2 id="关于ES6d的Proxy对象"><a href="#关于ES6d的Proxy对象" class="headerlink" title="关于ES6d的Proxy对象"></a>关于ES6d的Proxy对象</h2><p>策略模式固然可行，但是包装的有点多了，而且不便于书写，代码书写量增加了不少，也就是有一定门槛，那有没有更好的实现方式呢？我们能不能通过一层代理，在设置属性时候就去拦截它呢？这就是今天要讲到的ES6的Proxy对象。</p>
+<h3 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h3><p>Proxy 用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程。</p>
+<p>Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。Proxy 这个词的原意是代理，用在这里表示由它来“代理”某些操作，可以译为“代理器”。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">let obj = new Proxy(&#123;&#125;, &#123;</div><div class="line"> get (target, key, receiver) &#123;</div><div class="line"> console.log(`getting $&#123;key&#125;!`)</div><div class="line"> return Reflect.get(target, key, receiver)</div><div class="line"> &#125;,</div><div class="line"> set (target, key, value, receiver) &#123;</div><div class="line"> console.log(`setting $&#123;key&#125;!`)</div><div class="line"> return Reflect.set(target, key, value, receiver)</div><div class="line"> &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>上面代码对一个空对象架设了一层拦截，重定义了属性的读取（get）和设置（set）行为。这里暂时先不解释具体的语法，只看运行结果。对设置了拦截行为的对象obj，去读写它的属性，就会得到下面的结果。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">obj.count = 1</div><div class="line">// setting count!</div><div class="line">++obj.count</div><div class="line">// getting count!</div><div class="line">// setting count!</div><div class="line">// 2</div></pre></td></tr></table></figure></p>
+<p>上面代码说明，Proxy 实际上重载（overload）了点运算符，即用自己的定义覆盖了语言的原始定义。</p>
+<p>ES6 原生提供 Proxy 构造函数，用来生成 Proxy 实例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">let proxy = new Proxy(target, handler);</div></pre></td></tr></table></figure></p>
+<p>Proxy 对象的所有用法，都是上面这种形式，不同的只是handler参数的写法。其中，new Proxy()表示生成一个Proxy实例，target参数表示所要拦截的目标对象，handler参数也是一个对象，用来定制拦截行为。</p>
+<p>下面是另一个拦截读取属性行为的例子。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var proxy = new Proxy(&#123;&#125;, &#123;</div><div class="line"> get: function(target, property) &#123;</div><div class="line"> return 35;</div><div class="line"> &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">proxy.time // 35</div><div class="line">proxy.name // 35</div><div class="line">proxy.title // 35</div></pre></td></tr></table></figure></p>
+<p>上面代码中，作为构造函数，Proxy接受两个参数。第一个参数是所要代理的目标对象（上例是一个空对象），即如果没有Proxy的介入，操作原来要访问的就是这个对象；第二个参数是一个配置对象，对于每一个被代理的操作，需要提供一个对应的处理函数，该函数将拦截对应的操作。比如，上面代码中，配置对象有一个get方法，用来拦截对目标对象属性的访问请求。get方法的两个参数分别是目标对象和所要访问的属性。可以看到，由于拦截函数总是返回35，所以访问任何属性都得到35。</p>
+<p>注意，要使得Proxy起作用，必须针对Proxy实例（上例是proxy对象）进行操作，而不是针对目标对象（上例是空对象）进行操作。</p>
+<h3 id="2、利用Proxy重构表单验证"><a href="#2、利用Proxy重构表单验证" class="headerlink" title="2、利用Proxy重构表单验证"></a>2、利用Proxy重构表单验证</h3><p>利用proxy拦截不符合要求的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">function validator(target, validator, errorMsg) &#123;</div><div class="line"> return new Proxy(target, &#123;</div><div class="line"> _validator: validator,</div><div class="line"> set(target, key, value, proxy) &#123;</div><div class="line"> let errMsg = errorMsg</div><div class="line"> if (value == &apos;&apos;) &#123;</div><div class="line"> alert(`$&#123;errMsg[key]&#125;不能为空！`)</div><div class="line"> return target[key] = false</div><div class="line"> &#125;</div><div class="line"> let va = this._validator[key]</div><div class="line"> if (!!va(value)) &#123;</div><div class="line"> return Reflect.set(target, key, value, proxy)</div><div class="line"> &#125; else &#123;</div><div class="line"> alert(`$&#123;errMsg[key]&#125;格式不正确`)</div><div class="line"> return target[key] = false</div><div class="line"> &#125;</div><div class="line"> &#125;</div><div class="line"> &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>负责校验的逻辑代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">const validators = &#123;</div><div class="line"> name(value) &#123;</div><div class="line"> return value.length &gt; 6</div><div class="line"> &#125;,</div><div class="line"> passwd(value) &#123;</div><div class="line"> return value.length &gt; 6</div><div class="line"> &#125;,</div><div class="line"> moblie(value) &#123;</div><div class="line"> return /^1(3|5|7|8|9)[0-9]$/.test(value)</div><div class="line"> &#125;,</div><div class="line"> email(value) &#123;</div><div class="line"> return /^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)</div><div class="line"> &#125;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>客户端调用代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">const errorMsg = &#123; name: &apos;用户名&apos;, passwd: &apos;密码&apos;, moblie: &apos;手机号码&apos;, email: &apos;邮箱地址&apos; &#125;</div><div class="line">const vali = validator(&#123;&#125;, validators, errorMsg)</div><div class="line">let registerForm = document.querySelector(&apos;#registerForm&apos;)</div><div class="line">registerForm.addEventListener(&apos;submit&apos;, function() &#123;</div><div class="line"> let validatorNext = function*() &#123;</div><div class="line"> yield vali.name = registerForm.userName.value</div><div class="line"> yield vali.passwd = registerForm.passWord.value</div><div class="line"> yield vali.moblie = registerForm.phoneNumber.value</div><div class="line"> yield vali.email = registerForm.emailAddress.value</div><div class="line"> &#125;</div><div class="line"> let validator = validatorNext()</div><div class="line"> validator.next();</div><div class="line"> !vali.name || validator.next(); //上一步的校验通过才执行下一步</div><div class="line"> !vali.passwd || validator.next();</div><div class="line"> !vali.moblie || validator.next();</div><div class="line"> &#125;, false)</div></pre></td></tr></table></figure></p>
+<p>优点：条件和对象本身完全隔离开,后续代码的维护,代码整洁度,以及代码健壮性和复用性变得非常强。</p>
+<p>缺点：兼容性不好，有babel怕啥，粗糙版，很多细节其实还可以优化，这里只提供一种思路。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/FormValidation/" rel="tag"># --FormValidation</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/08/Ajax/" rel="next" title="Ajax 语法浅析(转)">
+                <i class="fa fa-chevron-left"></i> Ajax 语法浅析(转)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1、问题"><span class="nav-text">1、问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2、思路"><span class="nav-text">2、思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3、策略模式"><span class="nav-text">3、策略模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4、用策略模式重构表单校验"><span class="nav-text">4、用策略模式重构表单校验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1具体策略角色——编写策略类"><span class="nav-text">4.1具体策略角色——编写策略类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2抽象策略角色——编写Validator类"><span class="nav-text">4.2抽象策略角色——编写Validator类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3环境角色——客户端调用代码"><span class="nav-text">4.3环境角色——客户端调用代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4策略模式的优缺点"><span class="nav-text">4.4策略模式的优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5策略模式的意义"><span class="nav-text">4.5策略模式的意义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于ES6d的Proxy对象"><span class="nav-text">关于ES6d的Proxy对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、概述"><span class="nav-text">1、概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、利用Proxy重构表单验证"><span class="nav-text">2、利用Proxy重构表单验证</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
