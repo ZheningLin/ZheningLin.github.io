@@ -301,6 +301,182 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/05/22/Bom/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/22/Bom/" itemprop="url">JavaScript学习笔记之BOM</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-22T21:13:52+08:00">
+                2017-05-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/22/Bom/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/22/Bom/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/22/Bom/" class="leancloud_visitors" data-flag-title="JavaScript学习笔记之BOM">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>BOM：Browser Object Model 是浏览器对象模型，浏览器对象模型提供了独立与内容的、可以与浏览器窗口进行互动的对象结构，BOM由多个对象构成，其中代表浏览器窗口的window对象是BOM的顶层对象，其他对象都是该对象的子对象。</p>
+<h3 id="一、window对象"><a href="#一、window对象" class="headerlink" title="一、window对象"></a>一、window对象</h3><h4 id="1-作为Global"><a href="#1-作为Global" class="headerlink" title="1.作为Global"></a>1.作为Global</h4><p>（1）window有双重身份，一是js访问浏览器的一个接口，二是ECMAScript的Global对象。<br>（2）window作为Global，在全局作用域声明的变量、函数都是window对象的属性和方法。定义全局变量和定义window属性是有区别的：定义的window属性，可以用delete删掉，这和其他对象一致；定义的全局变量则不能。还有一个区别，尝试使用未定义的全局变量会抛错，而尝试使用window对象上未定义的属性，最多是undefined。</p>
+<h4 id="2-window对象常用属性"><a href="#2-window对象常用属性" class="headerlink" title="2.window对象常用属性"></a>2.window对象常用属性</h4><p>（1）window.frames：当页面中存在frame或iframe时，这些frame各自的window对象，都存储在顶级页面的window.frame中，可以通过索引号或frame的name属性迭代。但是最好不要用window.frames[“myframe”]去访问，容易引起误解，可以使用top，即top.frames[“myframe”]，页面中，top总是代表最顶级的window对象。<br>（2）window.parent：在frame中载入的页面，它的window对象的parent属性指向父级页面的window对象；顶级页面中window的parent指向top，也就是window自身。<br>（3）window.screenLeft/Top或window.screenX/Y：表示浏览器窗口左上角（窗口标题栏左上角）在桌面中的位置。<br>（4）window.innerWidth/Height和window.outerWidth/Height：前者表示我们可以使用的页面（不是body，是装body的视图容器）的大小；后者表示浏览器整个大小，包括标题栏、状态栏、菜单栏等。也可以通过document.body.clientWidth/Height获得视图容器大小，根据浏览器而定。</p>
+<h4 id="3-window对象常用方法"><a href="#3-window对象常用方法" class="headerlink" title="3.window对象常用方法"></a>3.window对象常用方法</h4><p>（1）window.open()：弹出窗口，为了安全，只在用户单击时才能弹出，其他触发不能弹出。<br>（2）window.setTimeout(func,time)和window.setInterval(func,time)：超时调用和间歇调用。用处很广泛了，需要注意的是这两个方法回调函数时，那些函数的this都指的是window。</p>
+<pre><code>- setInterval(code, millisec)：按照指定的周期（以毫秒计）来调用函数或计算表达式。
+    code（必须）：要调用的函数或要执行的代码串。
+    millisec（必须）：周期性执行或调用 code 之间的时间间隔，以毫秒计。
+- clearInterval(id_of_setinterval)：取消由 setInterval() 设置的 timeout。
+    id_of_setinterval：由 setInterval() 返回的 ID 值。
+- setTimeout(code, millisec)：在指定的毫秒数后调用函数或计算表达式。
+    code（必需）：要调用的函数后要执行的 JavaScript 代码串。
+    millisec（必需）：在执行代码前需等待的毫秒数。
+- clearTimeout(id_of_settimeout)：取消由 setTimeout() 方法设置的 timeout。
+    id_of_settimeout：由 setTimeout() 返回的 ID 值。该值标识要取消的延迟执行代码块。
+</code></pre><p>（3）window.alert(str)：只有一个确定按钮的警告。<br>（4）window.confirm(str)：有一个确定按钮和一个取消按钮的提示，所以confirm会返回一个boolean，用于表示点击了啥。<br>（5）window.prompt(title,str)：有一个确定一个取消，一个input的输入提示，返回字符串。<br>（6）window.print()：打印页面。</p>
+<h3 id="二、location对象"><a href="#二、location对象" class="headerlink" title="二、location对象"></a>二、location对象</h3><h4 id="1-location的引用"><a href="#1-location的引用" class="headerlink" title="1.location的引用"></a>1.location的引用</h4><p>（1）location比较特殊的地方是，它既是window的对象，也是document的对象，可以通过window.location或document.location使用。<br>（2）在下面的说明中，我们使用这个URL，<a href="http://blog.csdn.net:80/lbxx1984/index.html?123" target="_blank" rel="external">http://blog.csdn.net:80/lbxx1984/index.html?123</a></p>
+<h4 id="2-location属性"><a href="#2-location属性" class="headerlink" title="2.location属性"></a>2.location属性</h4><p>（1）href：返回地址栏中所有内容，<a href="http://blog.csdn.net:80/lbxx1984/index.html?123；" target="_blank" rel="external">http://blog.csdn.net:80/lbxx1984/index.html?123；</a><br>（2）protocol：返回当前页面的协议，http:；<br>（3）host：返回服务器名称和端口号，blog.csdn.net:80；<br>（4）hostname：返回服务器名称，blog.csdn.net；<br>（5）port：返回端口号，80；<br>（6）pathname：返回目录和文件名，/lbxx1984/index.html；<br>（7）hash：返回URL中的散列串，以#开头，例子中没有；<br>（8）search：返回URL中的查询串，以?开头，?123。</p>
+<h4 id="3-location方法"><a href="#3-location方法" class="headerlink" title="3.location方法"></a>3.location方法</h4><p>1）location.assign(url)：当前页面跳转到url，并在浏览器历史记录中生成一条新记录。等同于window.location=url或location.href=url，第三种最常用。其实只要修改location的属性（hash属性除外），页面就会以新的url重新加载。<br>（2）location.replace(url)：也是页面跳转，和assign的区别是不在浏览器记录中生成一条新记录，也就是不能使用后退键回到之前的页面。<br>（3）location.reload(boolean)：从新加载页面。如果传入true，就是从服务器重新加载，而不是从本地缓存加载。</p>
+<h3 id="三、其他对象"><a href="#三、其他对象" class="headerlink" title="三、其他对象"></a>三、其他对象</h3><h4 id="1、navigator对象"><a href="#1、navigator对象" class="headerlink" title="1、navigator对象"></a>1、navigator对象</h4><p>（1）navigator属性中包含了浏览器信息、浏览器配置、少数机器信息等。但浏览器对它的兼容性不是很好。<br>（2）navigator.plugins[]：非IE浏览器用这个数组存放插件。可以用来检查是否安装了某个插件。</p>
+<h4 id="2、screen对象"><a href="#2、screen对象" class="headerlink" title="2、screen对象"></a>2、screen对象</h4><p>（1）screen 对象基本上只<br>用来表明客户端的能力，其中包括浏览器窗口外部的显示器的信息，如像素宽度和高度等。每个浏览器中的screen对象都包含着各不相同的属性，兼容性不好，实际编程中用处不大。</p>
+<h4 id="3-history对象"><a href="#3-history对象" class="headerlink" title="3.history对象"></a>3.history对象</h4><p>（1）history 对象保存着用户上网的历史记录，从窗口被打开的那一刻算起。<br>（2）history 对象还有一个 length 属性，保存着历史记录的数量。<br>（3）history.go()方法可以在用户的历史记录中任意跳转。这个方法接受一个参数，负数表示向后跳转，正数表示向前跳转。<br>（4）JavaScript可以调用history对象的back()或forward ()，相当于用户点击了浏览器的“后退”或“前进”按钮。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/05/22/cssLayout/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -977,7 +1153,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -988,7 +1164,7 @@
             
             <div class="site-state-item site-state-categories">
               
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               
             </div>
@@ -999,7 +1175,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
