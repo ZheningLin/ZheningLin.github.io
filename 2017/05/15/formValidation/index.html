@@ -90,18 +90,18 @@
 
 
 
-<meta name="description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta name="description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。">
 <meta name="keywords" content="--FormValidation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)">
+<meta property="og:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式">
 <meta property="og:url" content="http://ZheningLin.github.io/2017/05/15/formValidation/index.html">
 <meta property="og:site_name" content="Jacob&#39;s Notes">
-<meta property="og:description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta property="og:description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。">
 <meta property="og:image" content="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067">
-<meta property="og:updated_time" content="2017-05-15T05:49:58.452Z">
+<meta property="og:updated_time" content="2017-05-22T09:46:43.041Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)">
-<meta name="twitter:description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。 假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。  所有选项不能为空 用户名长度不能少于6位 密码长度不能少于6位 手机号码必须符合格式 邮箱地址必须符合格式">
+<meta name="twitter:title" content="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式">
+<meta name="twitter:description" content="在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。">
 <meta name="twitter:image" content="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067">
 
 
@@ -136,7 +136,7 @@
 
 
 
-  <title>探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转) | Jacob's Notes</title>
+  <title>探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式 | Jacob's Notes</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -320,7 +320,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)</h1>
+          <h1 class="post-title" itemprop="name headline">探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式</h1>
         
 
         <div class="post-meta">
@@ -383,7 +383,7 @@
 
           
           
-             <span id="/2017/05/15/formValidation/" class="leancloud_visitors" data-flag-title="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)">
+             <span id="/2017/05/15/formValidation/" class="leancloud_visitors" data-flag-title="探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -411,16 +411,15 @@
       
 
       
-        <p>在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。</p>
-<p>假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。</p>
+        <p>在一个Web项目中，注册，登录，修改用户信息，下订单等功能的实现都离不开提交表单。这篇文章就阐述了如何编写相对看着舒服的表单验证代码。<br><a id="more"></a><br>假设我们正在编写一个注册的页面，在点击注册按钮之前，有如下几条校验逻辑。</p>
 <ul>
 <li>所有选项不能为空</li>
 <li>用户名长度不能少于6位</li>
 <li>密码长度不能少于6位</li>
 <li>手机号码必须符合格式</li>
-<li>邮箱地址必须符合格式<a id="more"></a>
-注：为简单起见，以下例子以传统的浏览器表单验证，Ajax异步请求不做探讨，浏览器端验证原理图：</li>
+<li>邮箱地址必须符合格式</li>
 </ul>
+<p>注：为简单起见，以下例子以传统的浏览器表单验证，Ajax异步请求不做探讨，浏览器端验证原理图：</p>
 <p><img src="https://camo.githubusercontent.com/9aa1276cbcec95a3afea48eb8ff6d15a44a92774/687474703a2f2f6f70656f6b6634756b2e626b742e636c6f7564646e2e636f6d2f696d6167653030352e6a7067" alt="Fetch"></p>
 <p>简要说明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">这里我们前端只做浏览器端的校验。很多工具可以在表单检验过后、浏览器发送请求前截取表单数据，攻击者可以修改请求中的数据，从而绕过</div><div class="line">JavaScript，将恶意数据注入服务器，这样会增加XSS（全称 Cross Site Scripting）攻击的机率。对于一般的网站，都不赞成采用浏览器端的</div><div class="line">表单验证方法。浏览器端和服务器端双重验证方法在浏览器端验证方法基础上增加服务器端的验证，其原理如图所示，该方法增加服务器端的验证</div><div class="line">，弥补了传统浏览器端验证的缺点。若表单输入不符合要求，浏览器端的 Javascript 验证能很快地给出响应，而服务器端的验证则可以防止恶意</div><div class="line">用户绕过 Javascript 验证，保证最终数据的准确性。</div></pre></td></tr></table></figure></p>
 <p>HTML代码：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"IE=edge"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">title</span>&gt;</span>探索几种表单验证最佳实践方式<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"http://xxx.com/register"</span> <span class="attr">id</span>=<span class="string">"registerForm"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"user"</span>&gt;</span>请输入用户名:<span class="tag">&lt;/<span class="name">label</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">id</span>=<span class="string">"user"</span> <span class="attr">name</span>=<span class="string">"userName"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"pwd"</span>&gt;</span>请输入密码:<span class="tag">&lt;/<span class="name">label</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">id</span>=<span class="string">"pwd"</span> <span class="attr">name</span>=<span class="string">"passWord"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"phone"</span>&gt;</span>请输入手机号码:<span class="tag">&lt;/<span class="name">label</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"tel"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">id</span>=<span class="string">"phone"</span> <span class="attr">name</span>=<span class="string">"phoneNumber"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"email"</span>&gt;</span>请输入邮箱:<span class="tag">&lt;/<span class="name">label</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">id</span>=<span class="string">"email"</span> <span class="attr">name</span>=<span class="string">"emailAddress"</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"btn btn-default"</span>&gt;</span>Submit<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">form</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure></p>
@@ -483,6 +482,7 @@
 <p>客户端调用代码<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> errorMsg = &#123; <span class="attr">name</span>: <span class="string">'用户名'</span>, <span class="attr">passwd</span>: <span class="string">'密码'</span>, <span class="attr">moblie</span>: <span class="string">'手机号码'</span>, <span class="attr">email</span>: <span class="string">'邮箱地址'</span> &#125;</div><div class="line"><span class="keyword">const</span> vali = validator(&#123;&#125;, validators, errorMsg)</div><div class="line"><span class="keyword">let</span> registerForm = <span class="built_in">document</span>.querySelector(<span class="string">'#registerForm'</span>)</div><div class="line">registerForm.addEventListener(<span class="string">'submit'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line"> <span class="keyword">let</span> validatorNext = <span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line"> <span class="keyword">yield</span> vali.name = registerForm.userName.value</div><div class="line"> <span class="keyword">yield</span> vali.passwd = registerForm.passWord.value</div><div class="line"> <span class="keyword">yield</span> vali.moblie = registerForm.phoneNumber.value</div><div class="line"> <span class="keyword">yield</span> vali.email = registerForm.emailAddress.value</div><div class="line"> &#125;</div><div class="line"> <span class="keyword">let</span> validator = validatorNext()</div><div class="line"> validator.next();</div><div class="line"> !vali.name || validator.next(); <span class="comment">//上一步的校验通过才执行下一步</span></div><div class="line"> !vali.passwd || validator.next();</div><div class="line"> !vali.moblie || validator.next();</div><div class="line"> &#125;, <span class="literal">false</span>)</div></pre></td></tr></table></figure></p>
 <p>优点：条件和对象本身完全隔离开,后续代码的维护,代码整洁度,以及代码健壮性和复用性变得非常强。</p>
 <p>缺点：兼容性不好，有babel怕啥，粗糙版，很多细节其实还可以优化，这里只提供一种思路。</p>
+<p><strong>转载自</strong>：<a href="https://github.com/jawil/blog/issues/19" target="_blank" rel="external">https://github.com/jawil/blog/issues/19</a></p>
 
       
     </div>
@@ -525,8 +525,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/08/Ajax/" rel="next" title="Ajax 语法浅析(转)">
-                <i class="fa fa-chevron-left"></i> Ajax 语法浅析(转)
+              <a href="/2017/05/08/Ajax/" rel="next" title="Ajax 语法浅析">
+                <i class="fa fa-chevron-left"></i> Ajax 语法浅析
               </a>
             
           </div>
@@ -639,7 +639,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -650,7 +650,7 @@
             
             <div class="site-state-item site-state-categories">
               
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               
             </div>
@@ -661,7 +661,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
@@ -886,7 +886,7 @@
         var disqus_config = function () {
           this.page.url = 'http://ZheningLin.github.io/2017/05/15/formValidation/';
           this.page.identifier = '2017/05/15/formValidation/';
-          this.page.title = '探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式(转)';
+          this.page.title = '探索两种优雅的表单验证——策略设计模式和ES6的Proxy代理模式';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://.disqus.com/embed.js';
