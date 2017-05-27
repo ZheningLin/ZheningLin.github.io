@@ -1,0 +1,1058 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--callBackFunction," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="在JavaScript中，函数是内置的类对象; 也就是说，函数是Object类型，它们可以像任何其他对象（String，Array，Number等）一样使用，因为它们实际上是对象本身。它们可以“存储在变量中，作为参数传递给函数，在函数内创建，并从函数返回结果值” 。">
+<meta name="keywords" content="--callBackFunction">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解JavaScript回调函数并使用它们">
+<meta property="og:url" content="http://ZheningLin.github.io/2017/05/24/CallBack/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="在JavaScript中，函数是内置的类对象; 也就是说，函数是Object类型，它们可以像任何其他对象（String，Array，Number等）一样使用，因为它们实际上是对象本身。它们可以“存储在变量中，作为参数传递给函数，在函数内创建，并从函数返回结果值” 。">
+<meta property="og:updated_time" content="2017-05-24T10:07:53.341Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理解JavaScript回调函数并使用它们">
+<meta name="twitter:description" content="在JavaScript中，函数是内置的类对象; 也就是说，函数是Object类型，它们可以像任何其他对象（String，Array，Number等）一样使用，因为它们实际上是对象本身。它们可以“存储在变量中，作为参数传递给函数，在函数内创建，并从函数返回结果值” 。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2017/05/24/CallBack/"/>
+
+
+
+
+
+  <title>理解JavaScript回调函数并使用它们 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/05/24/CallBack/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">理解JavaScript回调函数并使用它们</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-24T16:11:29+08:00">
+                2017-05-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/24/CallBack/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/24/CallBack/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/24/CallBack/" class="leancloud_visitors" data-flag-title="理解JavaScript回调函数并使用它们">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在JavaScript中，函数是内置的类对象; 也就是说，函数是Object类型，它们可以像任<br>何其他对象（String，Array，Number等）一样使用，因为它们实际上是对象本身。它们可以“存储在变量中，作为参数传递给函数，在函数内创建，并从函数返回结果值” 。<br><a id="more"></a><br>因为函数是内置的类对象，所以我们可以将一个函数作为一个参数传递给另一个函数，<br>然后再执行那个传入函数，甚至返回到稍后执行。这是在JavaScript中使用回调函数的本质。在本文的其余部分，我们将学习关于JavaScript回调函数的一切。回调函数可能是JavaScript中最广泛使用的功能编程技术，您可以在几乎每一个JavaScript和jQuery代码中找到它们，但是它们对许多JavaScript开发人员仍然是神秘的。当你完成阅读这篇文章的时候，这个奥秘就不会再有了。</p>
+<p>回调函数派生自称为功能编程的编程范例。在一个基本层面上，功能性编程规定了使用函数作为参数。功能性编程虽然在今天仍然在很小程度上仍然是一个深受专业训练的硕士程序员的深奥技术​​。</p>
+<p>幸运的是，功能编程的技术已经被阐明，所以像你和我这样的凡人可以轻松理解和使用它们。功能编程的主要技术之一就是回调函数。正如你将要阅读的那样，实现回调函数与传递常量变量一样简单。这种技术很简单，我不知道为什么它主要涵盖在高级JavaScript主题中。</p>
+<h3 id="什么是回调或高阶函数？"><a href="#什么是回调或高阶函数？" class="headerlink" title="什么是回调或高阶函数？"></a>什么是回调或高阶函数？</h3><p>回调函数也被称为高阶函数，是一个传递给另一个函数的函数（我们称之为另一个函数“otherFunction”）作为参数，并且回调函数在otherFunction中被调用（或执行）。回调函数本质上是一种模式（一种解决常见问题的模式），因此回调函数的使用也称为回调模式。</p>
+<p>在jQuery中回调函数的常见用法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Note that the item in the click method's parameter is a function, not a variable.​</span></div><div class="line">​<span class="comment">//The item is a callback function</span></div><div class="line">$(<span class="string">"#btn_1"</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  alert(<span class="string">"Btn 1 Clicked"</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>如上例所示，我们将一个函数作为参数传递给click方法。而click方法将调用（或执行）我们传递给它的回调函数。这个例子说明了JavaScript中回调函数的典型用法，一个在jQuery中广泛使用。</p>
+<p>在JavaScript中的另一个经典的回调函数示例：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> friends = [<span class="string">"Mike"</span>, <span class="string">"Stacy"</span>, <span class="string">"Andy"</span>, <span class="string">"Rick"</span>];</div><div class="line">​</div><div class="line">friends.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">eachName, index</span>)</span>&#123;</div><div class="line"><span class="built_in">console</span>.log(index + <span class="number">1</span> + <span class="string">". "</span> + eachName); <span class="comment">// 1. Mike, 2. Stacy, 3. Andy, 4. Rick​</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>再次，请注意我们将匿名函数（没有名称的函数）作为参数传递给forEach方法。</p>
+<p>到目前为止，我们已经将匿名函数作为参数传递给其他函数或方法。现在让我们看看回调的工作原理，然后再看具体的例子，开始制作我们自己的回调函数。</p>
+<h3 id="回调函数如何工作？"><a href="#回调函数如何工作？" class="headerlink" title="回调函数如何工作？"></a>回调函数如何工作？</h3><p>我们可以像使用变量一样使用函数，作为另一个函数的参数，在另一个函数中作为返回结果，在另一个函数中调用它。当我们将回调函数作为参数传递给另一个函数时，我们只传递函数定义,并没有在参数中执行该功能。换句话说，我们不像在执行一个函数时那样执行括号（）的拖尾对，而是传递函数。</p>
+<p>当包含(调用)函数拥有了在参数中定义的回调函数后，它可以在任何时候调用(也就是回调)它。</p>
+<p>请注意，回调函数不会立即执行，而是在包含函数的函数体内指定的位置“回调”它(形如其名)。所以，即使第一个jQuery示例如下所示：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">    <span class="comment">//The anonymous function is not being executed there in the parameter. ​</span></div><div class="line">​<span class="comment">//The item is a callback function</span></div><div class="line">$(<span class="string">"#btn_1"</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  alert(<span class="string">"Btn 1 Clicked"</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>匿名函数将延迟在click函数的函数体内被调用，即使没有名称，也可以被包含函数通过 arguments对象访问。</p>
+<p>回调函数是闭包的<br>当作为参数传递一个回调函数给另一个函数时，回调函数将在包含函数函数体内的某个位置被执行，就像回调函数在包含函数的函数体内定义一样。这意味着回调函数是闭包的，想更多地了解闭包，请参考作者另一个贴子<a href="http://javascriptissexy.com/understand-javascript-closures-with-ease/" target="_blank" rel="external">Understand JavaScript Closures With Ease</a>。从所周知，闭包函数可以访问包含函数的作用域，所以，回调函数可以访问包含函数的变量，甚至是全局变量。</p>
+<h3 id="实现回调函数时的基本原理"><a href="#实现回调函数时的基本原理" class="headerlink" title="实现回调函数时的基本原理"></a>实现回调函数时的基本原理</h3><p>简单地说，自己实现回调函数的时候需要遵循几条原则。</p>
+<h4 id="1-使用命名函数或匿名函数作为回调"><a href="#1-使用命名函数或匿名函数作为回调" class="headerlink" title="1.使用命名函数或匿名函数作为回调"></a>1.使用命名函数或匿名函数作为回调</h4><p>在前面的jQuery和forEach的例子中，我们在包含函数的参数中定义匿名函数，这是使用回调函数的通用形式之一，另一个经常被使用的形式是定义一个带名称的函数，并将函数名作为参数传递给另一个函数，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// global variable​</span></div><div class="line">​<span class="keyword">var</span> allUserData = [];</div><div class="line">​</div><div class="line">​<span class="comment">// generic logStuff function that prints to console​</span></div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">logStuff</span> (<span class="params">userData</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> ( <span class="keyword">typeof</span> userData === <span class="string">"string"</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="built_in">console</span>.log(userData);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( <span class="keyword">typeof</span> userData === <span class="string">"object"</span>)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> item <span class="keyword">in</span> userData) &#123;</div><div class="line">            <span class="built_in">console</span>.log(item + <span class="string">": "</span> + userData[item]);</div><div class="line">        &#125;</div><div class="line">​</div><div class="line">    &#125;</div><div class="line">​</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// A function that takes two parameters, the last one a callback function​</span></div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">getInput</span> (<span class="params">options, callback</span>) </span>&#123;</div><div class="line">    allUserData.push (options);</div><div class="line">    callback (options);</div><div class="line">​</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// When we call the getInput function, we pass logStuff as a parameter.​</span></div><div class="line">​<span class="comment">// So logStuff will be the function that will called back (or executed) inside the getInput function​</span></div><div class="line">getInput (&#123;<span class="attr">name</span>:<span class="string">"Rich"</span>, <span class="attr">speciality</span>:<span class="string">"JavaScript"</span>&#125;, logStuff);</div><div class="line">​<span class="comment">//  name: Rich​</span></div><div class="line">​<span class="comment">// speciality: JavaScript</span></div></pre></td></tr></table></figure></p>
+<h4 id="2-传递参数给回调函数"><a href="#2-传递参数给回调函数" class="headerlink" title="2.传递参数给回调函数"></a>2.传递参数给回调函数</h4><p>因为回调函数在执行的时候就和一般函数一样，我们可以传递参数给它。可以将包含函数的任何属性(或全局的属性)作为参数传递回调函数。在上一个例子中，我们将包含函数的options作为参数传递给回调函数。下面的例子让我们传递一个全局变量或局部变量给回调函数：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Global variable​</span></div><div class="line">​<span class="keyword">var</span> generalLastName = <span class="string">"Clinton"</span>;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">getInput</span> (<span class="params">options, callback</span>) </span>&#123;</div><div class="line">    allUserData.push (options);</div><div class="line">​<span class="comment">// Pass the global variable generalLastName to the callback function​</span></div><div class="line">    callback (generalLastName, options);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="3-在执行之前确保回调是一个函数"><a href="#3-在执行之前确保回调是一个函数" class="headerlink" title="3.在执行之前确保回调是一个函数"></a>3.在执行之前确保回调是一个函数</h4><p>在调用之前，确保通过参数传递进来的回调是一个需要的函数通常是明智的。此外，让回调函数是可选的也是一个好的实践。<br>让我们重构一下上面例子中的getInput函数，确保回调函数做了适当的检查。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getInput</span>(<span class="params">options, callback</span>) </span>&#123;</div><div class="line">    allUserData.push(options);</div><div class="line"></div><div class="line">    <span class="comment">// Make sure the callback is a function</span></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> callback === <span class="string">"function"</span>) &#123;</div><div class="line">    <span class="comment">// Call it, since we have confirmed it is callable</span></div><div class="line">        callback(options);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果getInput函数没有做适当的检查(检查callback是否是函数，或是否通过参数传递进来了),我们的代码将会导致运行时错误。</p>
+<p>####　4.使用含有this对象的回调函数的问题<br>当回调函数是一个含有this对象的方法时，我们必须修改执行回调函数的方法以保护this对象的内容。否则this对象将会指向全局的window对象(如果回调函数传递给了全局函数)，或指向包含函数。让我们看看下面的代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Define an object with some properties and a method</span></div><div class="line"><span class="comment">// We will later pass the method as a callback function to another function</span></div><div class="line"><span class="keyword">var</span> clientData = &#123;</div><div class="line">    <span class="attr">id</span>: <span class="number">094545</span>,</div><div class="line">    <span class="attr">fullName</span>: <span class="string">"Not Set"</span>,</div><div class="line">    <span class="comment">// setUserName is a method on the clientData object</span></div><div class="line">    setUserName: <span class="function"><span class="keyword">function</span> (<span class="params">firstName, lastName</span>)  </span>&#123;</div><div class="line">        <span class="comment">// this refers to the fullName property in this object</span></div><div class="line">      <span class="keyword">this</span>.fullName = firstName + <span class="string">" "</span> + lastName;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUserInput</span>(<span class="params">firstName, lastName, callback</span>)  </span>&#123;</div><div class="line">    <span class="comment">// Do other stuff to validate firstName/lastName here</span></div><div class="line"></div><div class="line">    <span class="comment">// Now save the names</span></div><div class="line">    callback (firstName, lastName);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在下面的示例代码中，当clientData.setUserName被执行时，this.fullName不会设置clientData 对象中的属性fullName，而是设置window 对象中的fullName，因为getUserInput是一个全局函数。出现这种现象是因为在全局函数中this对象指向了window对象。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">getUserInput (<span class="string">"Barack"</span>, <span class="string">"Obama"</span>, clientData.setUserName);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log (clientData.fullName);<span class="comment">// Not Set</span></div><div class="line"></div><div class="line"><span class="comment">// The fullName property was initialized on the window object</span></div><div class="line"><span class="built_in">console</span>.log (<span class="built_in">window</span>.fullName); <span class="comment">// Barack Obama</span></div></pre></td></tr></table></figure></p>
+<h4 id="5-使用Call或Apply函数保护this对象"><a href="#5-使用Call或Apply函数保护this对象" class="headerlink" title="5.使用Call或Apply函数保护this对象"></a>5.使用Call或Apply函数保护this对象</h4><p>我们可以通过使用 Call 或 Apply函数来解决前面示例中的问题。到目前为止，我们知道JavaScript中的每一个函数都有两个方法:Call和Apply。这些方法可以被用来在函数内部设置this对象的内容，并内容传递给函数参数指向的对象。</p>
+<p>Call将该值作为第一个参数的函数内部的this对象使用，传递给函数的剩余参数被单独传递（当然用逗号分隔）。Apply函数的第一个参数是也被用作值这个函数内部对象，而最后一个参数是数组（或参数对象）传递给该函数。</p>
+<p>这听起来很复杂，但让我们看看Apply和Call的使用是多么容易。为解决前面例子中出现的问题，我们使用Apply函数如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Note that we have added an extra parameter for the callback object, called "callbackObj"</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUserInput</span>(<span class="params">firstName, lastName, callback, callbackObj</span>)  </span>&#123;</div><div class="line">    <span class="comment">// Do other stuff to validate name here</span></div><div class="line"></div><div class="line">    <span class="comment">// The use of the Apply function below will set the this object to be callbackObj</span></div><div class="line">    callback.apply (callbackObj, [firstName, lastName]);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过Apply函数正确设置this对象，现在我们可以正确地执行回调，并在clientData对象上正确设置了fullName属性：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// We pass the clientData.setUserName method and the clientData object as parameters. The clientData object will be used by the Apply function to set the this object</span></div><div class="line">getUserInput (<span class="string">"Barack"</span>, <span class="string">"Obama"</span>, clientData.setUserName, clientData);</div><div class="line"></div><div class="line"><span class="comment">// the fullName property on the clientData was correctly set</span></div><div class="line"><span class="built_in">console</span>.log (clientData.fullName); <span class="comment">// Barack Obama</span></div></pre></td></tr></table></figure></p>
+<p>我们也会使用Call函数，但在这种情况下，我们使用了Apply函数。</p>
+<h4 id="6-允许多个回调函数"><a href="#6-允许多个回调函数" class="headerlink" title="6.允许多个回调函数"></a>6.允许多个回调函数</h4><p>我们可以将多个回调函数传递给函数的参数，就像我们可以传递多个变量一样。这是jQuery的AJAX函数的典型例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">successCallback</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Do stuff before send</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">successCallback</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Do stuff if success message received</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">completeCallback</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Do stuff upon completion</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">errorCallback</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Do stuff if error received</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">$.ajax(&#123;</div><div class="line">    <span class="attr">url</span>:<span class="string">"http://fiddle.jshell.net/favicon.png"</span>,</div><div class="line">    <span class="attr">success</span>:successCallback,</div><div class="line">    <span class="attr">complete</span>:completeCallback,</div><div class="line">    <span class="attr">error</span>:errorCallback</div><div class="line"></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="“回调地狱”问题和解决方案"><a href="#“回调地狱”问题和解决方案" class="headerlink" title="“回调地狱”问题和解决方案"></a>“回调地狱”问题和解决方案</h3><p>异步代码执行是一种简单的以任意顺序执行的方式，有时是很常见的有很多层级的回调函数，你看起来像下面这样的代码。下面这种凌乱的代码称作“回调地狱”，因为它是一种包含非常多的回调的麻烦的代码。我是在node-MongoDB-native里看到这个例子的，MongoDB驱动Node.js.示例代码就像这样：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> p_client = <span class="keyword">new</span> Db(<span class="string">'integration_tests_20'</span>, <span class="keyword">new</span> Server(<span class="string">"127.0.0.1"</span>, <span class="number">27017</span>, &#123;&#125;), &#123;<span class="string">'pk'</span>:CustomPKFactory&#125;);</div><div class="line">p_client.open(<span class="function"><span class="keyword">function</span>(<span class="params">err, p_client</span>) </span>&#123;</div><div class="line">    p_client.dropDatabase(<span class="function"><span class="keyword">function</span>(<span class="params">err, done</span>) </span>&#123;</div><div class="line">        p_client.createCollection(<span class="string">'test_custom_key'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">err, collection</span>) </span>&#123;</div><div class="line">            collection.insert(&#123;<span class="string">'a'</span>:<span class="number">1</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">err, docs</span>) </span>&#123;</div><div class="line">                collection.find(&#123;<span class="string">'_id'</span>:<span class="keyword">new</span> ObjectID(<span class="string">"aaaaaaaaaaaa"</span>)&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">err, cursor</span>) </span>&#123;</div><div class="line">                    cursor.toArray(<span class="function"><span class="keyword">function</span>(<span class="params">err, items</span>) </span>&#123;</div><div class="line">                        test.assertEquals(<span class="number">1</span>, items.length);</div><div class="line"></div><div class="line">                        <span class="comment">// Let's close the db</span></div><div class="line">                        p_client.close();</div><div class="line">                    &#125;);</div><div class="line">                &#125;);</div><div class="line">            &#125;);</div><div class="line">        &#125;);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>你不太可能在自己的代码里碰到这个的问题，但如果你碰到了(或以后偶然碰到了)，那么有以下两种方式解决这个问题。</p>
+<ol>
+<li>命名你的函数并声明它们，并传递函数的名称作为回调，而不是在main函数的参数中定义一个匿名函数。</li>
+<li>模块化：将代码分成模块，因此您可以导出执行特定作业的代码段。然后，您可以将该模块导入更大的应用程序。</li>
+</ol>
+<h3 id="制作您自己的回调函数"><a href="#制作您自己的回调函数" class="headerlink" title="制作您自己的回调函数"></a>制作您自己的回调函数</h3><p>现在你已经完全理解(我相信你已经理解了，如果没有请快速重新阅读一遍)了JavaScript关于回调的所用特性并且看到回调的使用是如此简单但功能却很强大。你应该看看自己的代码是否有机会使用回调函数，有以下需求时你可以考虑使用回调：</p>
+<ul>
+<li>避免重复代码 (DRY—Do Not Repeat Yourself)</li>
+<li>实现更好的抽象，您可以拥有更多通用功能（可以处理各种功能）</li>
+<li>具有更好的维护性</li>
+<li>增强代码的可读性</li>
+<li>有更多定制的功能</li>
+</ul>
+<p>实现自己的回调函数很简单，在下面的例子中，我可以创建一个函数完成所用的工作：获取用户数据，使用用户数据生成一首通用的诗，使用用户数据来欢迎用户，但这个函数将会是一个凌乱的函数，到处是if/else的判断，甚至会有很多的限制并无法执行应用程序可能需要的处理用户数据的其它函数。</p>
+<p>替而代之的是我让实现增加了回调函数，这样主函数获取用户数据后可以传递用户全名和性别给回调函数的参数并执行回调函数以完成任何任务。</p>
+<p>简而言之，getUserInput函数是通用的，它可以执行多个拥有各种功能的回调函数。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// First, setup the generic poem creator function; it will be the callback function in the getUserInput function below.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">genericPoemMaker</span>(<span class="params">name, gender</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(name + <span class="string">" is finer than fine wine."</span>);</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">"Altruistic and noble for the modern time."</span>);</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">"Always admirably adorned with the latest style."</span>);</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">"A "</span> + gender + <span class="string">" of unfortunate tragedies who still manages a perpetual smile"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//The callback, which is the last item in the parameter, will be our genericPoemMaker function we defined above.</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getUserInput</span>(<span class="params">firstName, lastName, gender, callback</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> fullName = firstName + <span class="string">" "</span> + lastName;</div><div class="line"></div><div class="line">    <span class="comment">// Make sure the callback is a function</span></div><div class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> callback === <span class="string">"function"</span>) &#123;</div><div class="line">    <span class="comment">// Execute the callback function and pass the parameters to it</span></div><div class="line">    callback(fullName, gender);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>调用getUserInput函数并传递genericPoemMaker函数作为回调：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">getUserInput(<span class="string">"Michael"</span>, <span class="string">"Fassbender"</span>, <span class="string">"Man"</span>, genericPoemMaker);</div><div class="line"><span class="comment">// Output</span></div><div class="line"><span class="comment">/* Michael Fassbender is finer than fine wine.</span></div><div class="line">Altruistic and noble for the modern time.</div><div class="line">Always admirably adorned with the latest style.</div><div class="line">A Man of unfortunate tragedies who still manages a perpetual smile.</div><div class="line">*/</div></pre></td></tr></table></figure></p>
+<p>因为getUserInput 函数只处理用户数据的输入，我们可以传递任何回调函数给它。例如我们可以像这样传递一个greetUser函数。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">greetUser</span>(<span class="params">customerName, sex</span>)  </span>&#123;</div><div class="line">   <span class="keyword">var</span> salutation  = sex &amp;&amp; sex === <span class="string">"Man"</span> ? <span class="string">"Mr."</span> : <span class="string">"Ms."</span>;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"Hello, "</span> + salutation + <span class="string">" "</span> + customerName);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// Pass the greetUser function as a callback to getUserInput</span></div><div class="line">getUserInput(<span class="string">"Bill"</span>, <span class="string">"Gates"</span>, <span class="string">"Man"</span>, greetUser);</div><div class="line"></div><div class="line"><span class="comment">// And this is the output</span></div><div class="line">Hello, Mr. Bill Gates</div></pre></td></tr></table></figure></p>
+<p>和上一个例子一样，我们调用了同一个getUserInput 函数，但这次却执行了完全不同的任务。</p>
+<p>如你所见，回调函数提供了广泛的功能。尽管前面提到的例子非常简单，在你开始使用回调函数的时候思考一下你可以节省多少工作，如何更好地抽象你的代码。加油吧！在早上起来时想一想，在晚上睡觉前想一想，在你休息时想一想……</p>
+<p>我们在JavaScript中经常使用回调函数时注意以下几点，尤其是现在的web应用开发，在第三方库和框架中</p>
+<ul>
+<li>异步执行(例如读文件，发送HTTP请求)</li>
+<li>在事件侦听器/处理程序</li>
+<li>在setTimeout和setInterval方法中</li>
+<li>泛化：代码简洁</li>
+</ul>
+<p>翻译自：<a href="http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/" target="_blank" rel="external">http://javascriptissexy.com/understand-javascript-callback-functions-and-use-them/</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/callBackFunction/" rel="tag"># --callBackFunction</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/Dom/" rel="next" title="JavaScript学习笔记之DOM">
+                <i class="fa fa-chevron-left"></i> JavaScript学习笔记之DOM
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/25/VariableScope/" rel="prev" title="JavaScript变量作用域和变量提升解析">
+                JavaScript变量作用域和变量提升解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是回调或高阶函数？"><span class="nav-text">什么是回调或高阶函数？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#回调函数如何工作？"><span class="nav-text">回调函数如何工作？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现回调函数时的基本原理"><span class="nav-text">实现回调函数时的基本原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-使用命名函数或匿名函数作为回调"><span class="nav-text">1.使用命名函数或匿名函数作为回调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-传递参数给回调函数"><span class="nav-text">2.传递参数给回调函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-在执行之前确保回调是一个函数"><span class="nav-text">3.在执行之前确保回调是一个函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-使用Call或Apply函数保护this对象"><span class="nav-text">5.使用Call或Apply函数保护this对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-允许多个回调函数"><span class="nav-text">6.允许多个回调函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“回调地狱”问题和解决方案"><span class="nav-text">“回调地狱”问题和解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#制作您自己的回调函数"><span class="nav-text">制作您自己的回调函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2017/05/24/CallBack/';
+          this.page.identifier = '2017/05/24/CallBack/';
+          this.page.title = '理解JavaScript回调函数并使用它们';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

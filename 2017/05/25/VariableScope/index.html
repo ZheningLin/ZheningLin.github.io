@@ -1,0 +1,1022 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--Variable Scope," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="在这篇文章中，我们将学习JavaScript的变量的作用域和变量提升，这两者的所有特性。 我们必须了解JavaScript中变量作用域和变量提升的工作，如果想了解JavaScript的话。这些概念看起来很简单; 他们不是。存在一些重要的细微之处，我们必须明白，如果我们想要成为成熟的JavaScript开发人员。">
+<meta name="keywords" content="--Variable Scope">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript变量作用域和变量提升解析">
+<meta property="og:url" content="http://ZheningLin.github.io/2017/05/25/VariableScope/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="在这篇文章中，我们将学习JavaScript的变量的作用域和变量提升，这两者的所有特性。 我们必须了解JavaScript中变量作用域和变量提升的工作，如果想了解JavaScript的话。这些概念看起来很简单; 他们不是。存在一些重要的细微之处，我们必须明白，如果我们想要成为成熟的JavaScript开发人员。">
+<meta property="og:updated_time" content="2017-05-27T14:17:30.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript变量作用域和变量提升解析">
+<meta name="twitter:description" content="在这篇文章中，我们将学习JavaScript的变量的作用域和变量提升，这两者的所有特性。 我们必须了解JavaScript中变量作用域和变量提升的工作，如果想了解JavaScript的话。这些概念看起来很简单; 他们不是。存在一些重要的细微之处，我们必须明白，如果我们想要成为成熟的JavaScript开发人员。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2017/05/25/VariableScope/"/>
+
+
+
+
+
+  <title>JavaScript变量作用域和变量提升解析 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/05/25/VariableScope/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaScript变量作用域和变量提升解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-25T09:18:12+08:00">
+                2017-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-JavaScript/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -JavaScript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/25/VariableScope/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/25/VariableScope/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/25/VariableScope/" class="leancloud_visitors" data-flag-title="JavaScript变量作用域和变量提升解析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在这篇文章中，我们将学习JavaScript的变量的作用域和变量提升，这两者的所有特性。</p>
+<p>我们必须了解JavaScript中变量作用域和变量提升的工作，如果想了解JavaScript的话。这些概念看起来很简单; 他们不是。存在一些重要的细微之处，我们必须明白，如果我们想要成为成熟的JavaScript开发人员。<br><a id="more"></a></p>
+<h3 id="变量作用域"><a href="#变量作用域" class="headerlink" title="变量作用域"></a>变量作用域</h3><p>变量的作用域是变量存在的上下文。范围指定从哪里可以访问变量，以及是否可以访问该上下文中的变量。<br>变量具有局部作用域或全局作用域。</p>
+<h4 id="局部变量（函数级范围）"><a href="#局部变量（函数级范围）" class="headerlink" title="局部变量（函数级范围）"></a>局部变量（函数级范围）</h4><p>与大多数编程语言不同，JavaScript不具有块级作用域（范围为围绕大括号的变量）; 相反，JavaScript具有函数级别的作用域。在函数中声明的变量是局部变量，只能在该函数内或该函数内的函数中访问。</p>
+<p>函数级别作用域：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> name = <span class="string">"Richard"</span>;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">showName</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> name = <span class="string">"Jack"</span>; <span class="comment">// local variable; only accessible in this showName function​</span></div><div class="line">    <span class="built_in">console</span>.log (name); <span class="comment">// Jack​</span></div><div class="line">&#125;</div><div class="line"><span class="built_in">console</span>.log (name); <span class="comment">// Richard: the global variable</span></div></pre></td></tr></table></figure></p>
+<p>没有块级作用域：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> name = <span class="string">"Richard"</span>;</div><div class="line">​<span class="comment">// the blocks in this if statement do not create a local context for the name variable​</span></div><div class="line">​<span class="keyword">if</span> (name) &#123;</div><div class="line">    name = <span class="string">"Jack"</span>; <span class="comment">// this name is the global name variable and it is being changed to "Jack" here​</span></div><div class="line">    <span class="built_in">console</span>.log (name); <span class="comment">// Jack: still the global variable​</span></div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// Here, the name variable is the same global name variable, but it was changed in the if statement​</span></div><div class="line"><span class="built_in">console</span>.log (name); <span class="comment">// Jack</span></div></pre></td></tr></table></figure></p>
+<p><strong>如果不声明局部变量的话，很容易出错</strong><br>在使用局部变量之前，一定要记得先声明。你可以用JSHint 来检查你的语法。下面这个例子是不声明本地变量导致的问题：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// If you don't declare your local variables with the var keyword, they are part of the global scope​</span></div><div class="line">​<span class="keyword">var</span> name = <span class="string">"Michael Jackson"</span>;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">showCelebrityName</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log (name);</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">showOrdinaryPersonName</span> (<span class="params"></span>) </span>&#123;   </div><div class="line">    name = <span class="string">"Johnny Evers"</span>;</div><div class="line">    <span class="built_in">console</span>.log (name);</div><div class="line">&#125;</div><div class="line">showCelebrityName (); <span class="comment">// Michael Jackson​</span></div><div class="line">​</div><div class="line">​<span class="comment">// name is not a local variable, it simply changes the global name variable​</span></div><div class="line">showOrdinaryPersonName (); <span class="comment">// Johnny Evers​</span></div><div class="line">​</div><div class="line">​<span class="comment">// The global variable is now Johnny Evers, not the celebrity name anymore​</span></div><div class="line">showCelebrityName (); <span class="comment">// Johnny Evers​</span></div><div class="line">​</div><div class="line">​<span class="comment">// The solution is to declare your local variable with the var keyword​</span></div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">showOrdinaryPersonName</span> (<span class="params"></span>) </span>&#123;   </div><div class="line">    <span class="keyword">var</span> name = <span class="string">"Johnny Evers"</span>; <span class="comment">// Now name is always a local variable and it will not overwrite the global variable​</span></div><div class="line">    <span class="built_in">console</span>.log (name);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>在函数中局部变量优先级高于全局变量</strong><br>如果你同时声明了一个全局变量，一个局部变量，两者的名字一样的话，在函数里面使用这个变量的时候，将优先使用本地声明的这个变量。在一个函数里面使用一个变量的时候，它会首先在本地环境里面查找这个变量，找到了就直接使用，只有在本地找不到该变量时，它才会到全局环境里去找全局变量。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> name = <span class="string">"Paul"</span>;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">users</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Here, the name variable is local and it takes precedence over the same name variable in the global scope​</span></div><div class="line">​<span class="keyword">var</span> name = <span class="string">"Jack"</span>;</div><div class="line">​</div><div class="line">​<span class="comment">// The search for name starts right here inside the function before it attempts to look outside the function in the global scope​</span></div><div class="line"><span class="built_in">console</span>.log (name); </div><div class="line">&#125;</div><div class="line">​</div><div class="line">users (); <span class="comment">// Jack</span></div></pre></td></tr></table></figure></p>
+<h4 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h4><p>在函数外部声明的所有变量都在全局范围内。在浏览器中，这是我们作为前端开发人员所关心的，全局上下文或作用域是Window对象（或整个HTML文档）。<br>在函数外声明或初始化的任何变量都是一个全局变量，因此这个变量可以在任何地方被使用。例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// To declare a global variable, you could do any of the following:​</span></div><div class="line">​<span class="keyword">var</span> myName = <span class="string">"Richard"</span>;</div><div class="line">​</div><div class="line">​<span class="comment">// or even​</span></div><div class="line">firstName = <span class="string">"Richard"</span>;</div><div class="line">​</div><div class="line">​<span class="comment">// or ​</span></div><div class="line">​<span class="keyword">var</span> name; <span class="comment">//​</span></div><div class="line">name;</div></pre></td></tr></table></figure></p>
+<p>如果一个变量被初始化（赋值），而不用首先使用var关键字进行声明，则它会自动添加到全局环境中，变成一个全局变量：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">showAge</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// Age is a global variable because it was not declared with the var keyword inside this function​</span></div><div class="line">    age = <span class="number">90</span>;</div><div class="line">    <span class="built_in">console</span>.log(age);<span class="comment">// ​</span></div><div class="line">&#125;</div><div class="line">​</div><div class="line">showAge (); <span class="comment">// 90​</span></div><div class="line">​</div><div class="line">​<span class="comment">// Age is in the global context, so it is available here, too​</span></div><div class="line"><span class="built_in">console</span>.log(age); <span class="comment">// 90</span></div></pre></td></tr></table></figure></p>
+<p>即时在变量在块级中声明，也是全局变量，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Both firstName variables are in the global scope, even though the second one is surrounded by a block &#123;&#125;. ​</span></div><div class="line">​<span class="keyword">var</span> firstName = <span class="string">"Richard"</span>;</div><div class="line">&#123;</div><div class="line">​<span class="keyword">var</span> firstName = <span class="string">"Bob"</span>;</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// To reiterate: JavaScript does not have block-level scope​</span></div><div class="line">​</div><div class="line">​<span class="comment">// The second declaration of firstNa</span></div></pre></td></tr></table></figure>
+<p>另一个例子:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</div><div class="line">    <span class="built_in">console</span>.log (i); <span class="comment">// outputs 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;​</span></div><div class="line">&#125;;</div><div class="line">​</div><div class="line">​<span class="comment">// The variable i is a global variable and it is accessible in the following function with the last value it was assigned above ​</span></div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">aNumber</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="built_in">console</span>.log(i);</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// The variable i in the aNumber function below is the global variable i that was changed in the for loop above. Its last value was 11, set just before the for loop exited:​</span></div><div class="line">aNumber ();  <span class="comment">// 11​</span></div></pre></td></tr></table></figure></p>
+<p><strong>setTimeout变量在全局作用域内执行</strong><br>注意，setTimeout中的所有函数都在全局范围内执行。示例如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// The use of the "this" object inside the setTimeout function refers to the Window object, not to myObj​</span></div><div class="line">​</div><div class="line">​<span class="keyword">var</span> highValue = <span class="number">200</span>;</div><div class="line">​<span class="keyword">var</span> constantVal = <span class="number">2</span>;</div><div class="line">​<span class="keyword">var</span> myObj = &#123;</div><div class="line">    <span class="attr">highValue</span>: <span class="number">20</span>,</div><div class="line">    <span class="attr">constantVal</span>: <span class="number">5</span>,</div><div class="line">    <span class="attr">calculateIt</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line"> setTimeout (<span class="function"><span class="keyword">function</span>  (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.constantVal * <span class="keyword">this</span>.highValue);</div><div class="line">&#125;, <span class="number">2000</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// The "this" object in the setTimeout function used the global highValue and constantVal variables, because the reference to "this" in the setTimeout function refers to the global window object, not to the myObj object as we might expect.​</span></div><div class="line">​</div><div class="line">myObj.calculateIt(); <span class="comment">// 400​</span></div><div class="line">​<span class="comment">// This is an important point to remember.</span></div></pre></td></tr></table></figure></p>
+<p><strong>不要过度使用全局变量</strong><br>如果你想成为一个JavaScript高手，你一定要尽量避免在全局域中创建过多的变量，像下面这样：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// These two variables are in the global scope and they shouldn't be here​</span></div><div class="line">​<span class="keyword">var</span> firstName, lastName;</div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">fullName</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log (<span class="string">"Full Name: "</span> + firstName + <span class="string">" "</span> + lastName );</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这是改进的代码和过度使用全局变量的正确方法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Declare the variables inside the function where they are local variables​</span></div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">fullName</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> firstName = <span class="string">"Michael"</span>, lastName = <span class="string">"Jackson"</span>;</div><div class="line">​</div><div class="line">    <span class="built_in">console</span>.log (<span class="string">"Full Name: "</span> + firstName + <span class="string">" "</span> + lastName );</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在最后一个例子中，函数fullName也在全局作用域内。</p>
+<h3 id="变量提升（Variable-Hoisting）"><a href="#变量提升（Variable-Hoisting）" class="headerlink" title="变量提升（Variable Hoisting）"></a>变量提升（Variable Hoisting）</h3><p>在javascript中，有个变量声明提升的概念。在一个函数里声明的变量，它的声明会被提到函数的顶部。在函数外定义的变量，它的声明则会被提到全局环境的顶部。</p>
+<p>重要的是要知道只有变量声明被提升到顶部，而不是变量初始化或分配（当该变量被赋值时）。<br>一个变量提升的例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">showName</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="built_in">console</span>.log (<span class="string">"First Name: "</span> + name);</div><div class="line">​<span class="keyword">var</span> name = <span class="string">"Ford"</span>;</div><div class="line"><span class="built_in">console</span>.log (<span class="string">"Last Name: "</span> + name);</div><div class="line">&#125;</div><div class="line">​</div><div class="line">showName (); </div><div class="line">​<span class="comment">// First Name: undefined​</span></div><div class="line">​<span class="comment">// Last Name: Ford​</span></div><div class="line">​</div><div class="line">​<span class="comment">// The reason undefined prints first is because the local variable name was hoisted to the top of the function​</span></div><div class="line">​<span class="comment">// Which means it is this local variable that get calls the first time.​</span></div><div class="line">​<span class="comment">// This is how the code is actually processed by the JavaScript engine:​</span></div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">showName</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> name; <span class="comment">// name is hoisted (note that is undefined at this point, since the assignment happens below)​</span></div><div class="line"><span class="built_in">console</span>.log (<span class="string">"First Name: "</span> + name); <span class="comment">// First Name: undefined​</span></div><div class="line">​</div><div class="line">name = <span class="string">"Ford"</span>; <span class="comment">// name is assigned a value​</span></div><div class="line">​</div><div class="line">​<span class="comment">// now name is Ford​</span></div><div class="line"><span class="built_in">console</span>.log (<span class="string">"Last Name: "</span> + name); <span class="comment">// Last Name: Ford​</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>在提升的时候函数声明覆盖变量声明</strong><br>函数的声明和变量的声明都会被提升到所在作用域的顶部。如果函数的名字和变量的名字相同的话，函数的声明会覆盖掉变量的声明（但是不能覆盖变量的赋值）。像上面提到的，变量的赋值是不会被提升的，函数的赋值也不会被提升。附：函数的赋值的格式 var myFunction = function () {}。<br>下面是一个基本的演示例子：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">// Both the variable and the function are named myName​</span></div><div class="line">​<span class="keyword">var</span> myName;</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">myName</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="built_in">console</span>.log (<span class="string">"Rich"</span>);</div><div class="line">&#125;</div><div class="line">​</div><div class="line">​<span class="comment">// The function declaration overrides the variable name​</span></div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> myName); <span class="comment">// function</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">// But in this example, the variable assignment overrides the function declaration​</span></div><div class="line">​<span class="keyword">var</span> myName = <span class="string">"Richard"</span>; <span class="comment">// This is the variable assignment (initialization) that overrides the function declaration.​</span></div><div class="line">​</div><div class="line">​<span class="function"><span class="keyword">function</span> <span class="title">myName</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="built_in">console</span>.log (<span class="string">"Rich"</span>);</div><div class="line">&#125;</div><div class="line">​</div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> myName); <span class="comment">// string</span></div></pre></td></tr></table></figure>
+<p>重要的是要注意，函数表达式，如下面的示例，并没有被提升。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="built_in">console</span>.log (<span class="string">"Rich"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在strict 模式下,如果你给一个没有被声明的变量赋值，会产生错误。所以一定在变量赋值之前要先声明变量。</p>
+<p>翻译自：<a href="http://javascriptissexy.com/javascript-variable-scope-and-hoisting-explained/" target="_blank" rel="external">http://javascriptissexy.com/javascript-variable-scope-and-hoisting-explained/</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Variable-Scope/" rel="tag"># --Variable Scope</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/24/CallBack/" rel="next" title="理解JavaScript回调函数并使用它们">
+                <i class="fa fa-chevron-left"></i> 理解JavaScript回调函数并使用它们
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量作用域"><span class="nav-text">变量作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局部变量（函数级范围）"><span class="nav-text">局部变量（函数级范围）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全局变量"><span class="nav-text">全局变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量提升（Variable-Hoisting）"><span class="nav-text">变量提升（Variable Hoisting）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2017/05/25/VariableScope/';
+          this.page.identifier = '2017/05/25/VariableScope/';
+          this.page.title = 'JavaScript变量作用域和变量提升解析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
