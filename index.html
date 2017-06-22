@@ -412,18 +412,14 @@
 
       
         
-          
-            <p>##常见操作<br>1、配置用户名和邮箱<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git help git   ---查看帮助文档</div><div class="line">git config --global user.name &quot;leorunwind&quot;</div><div class="line">git config --global user.email &quot;luorunwen@163.com&quot;</div></pre></td></tr></table></figure></p>
-<p>2、利用Git从本地上传到GitHub<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">cd &#123;path&#125;/leosite-code/  ---进入到要push到远程库的文件夹，&#123;path&#125;替换为具体的project目录</div><div class="line">git init   ---在当前文件夹创建一个空的git本地库</div><div class="line">git add -all   ---将当前目录下的所有文件都添加到git本地库里</div><div class="line">git commit -m &apos;first commit&apos;   ---提交并加上提交信息</div><div class="line">git remote add origin https://github.com/leorunwind/leosite.git   ---连接远程库，回车会让你输入用户名和密码</div><div class="line">git push -u origin master</div><div class="line">git pull -u origin master   ---如果上一条push提示failed to ...，用pull回拉从而同步版本</div><div class="line">git push -u origin master   ---push到远程库</div></pre></td></tr></table></figure></p>
-<p>3、GitHub的分支管理</p>
-<p><strong>创建</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- 创建一个本地分支： git branch &lt;新分支名字&gt;</div><div class="line">- 将本地分支同步到GitHub上面： git push &lt;本地仓库名&gt; &lt;新分支名&gt;</div><div class="line">- 切换到新建立的分支： git checkout &lt;新分支名&gt;</div><div class="line">- 为你的分支加入一个新的远程端： git remote add &lt;远程端名字&gt; &lt;地址&gt;</div><div class="line">- 查看当前仓库有几个分支: git branch</div></pre></td></tr></table></figure></p>
-<p><strong>删除</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- 从本地删除一个分支： git branch -d &lt;分支名称&gt;</div><div class="line">- 同步到GitHub上面删除这个分支： git push &lt;本地仓库名&gt; :&lt;GitHub端分支&gt;</div></pre></td></tr></table></figure></p>
-<p>##常见错误<br>1、错误信息：无法pull仓库refusing to merge unrelated histories</p>
-<p>   解决办法：git pull origin master –allow-unrelated-histories</p>
-<p>2、错误信息：fatal: remote origin already exists.</p>
-<p>   解决办法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- 先输入$ git remote rm origin</div><div class="line"></div><div class="line">- 再输入$ git remote add origin git@github.com:djqiang/gitdemo.git 就不会报错了！</div><div class="line"></div><div class="line">- 如果输入$ git remote rm origin 还是报错的话，error: Could not remove config section &apos;remote.origin&apos;. 我们需要修改gitconfig文件的内容</div><div class="line"></div><div class="line">- 找到你的github的安装路径，我的是C:\Users\ASUS\AppData\Local\GitHub\PortableGit_ca477551eeb4aea0e4ae9fcd3358bd96720bb5c8\etc</div><div class="line"></div><div class="line">- 找到一个名为gitconfig的文件，打开它把里面的[remote &quot;origin&quot;]那一行删掉就好了！</div></pre></td></tr></table></figure></p>
-
-          
+          <p>##常见操作<br>1、配置用户名和邮箱<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git help git   ---查看帮助文档</div><div class="line">git config --global user.name &quot;leorunwind&quot;</div><div class="line">git config --global user.email &quot;luorunwen@163.com&quot;</div></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/22/github/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
