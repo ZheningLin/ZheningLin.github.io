@@ -1,0 +1,1052 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--vue2.0," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本文仅讲解如何使用 Vue 创建一个实现分页、搜索、批量操作的列表组件，所以只提供此小组件的代码及说明，不提供其之外的代码或配置  github 地址：https://github.com/ZheningLin/Vue-ListComponents 使用到的技术或框架 Vue.js (2.0) 一套基于 MVVM 的 progressive framework，可以帮助我们迅速搭建用户界面 se">
+<meta name="keywords" content="--vue2.0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue 2.0 制作列表组件，实现分页、搜索、批量操作等">
+<meta property="og:url" content="http://ZheningLin.github.io/2017/07/12/vue-form/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="本文仅讲解如何使用 Vue 创建一个实现分页、搜索、批量操作的列表组件，所以只提供此小组件的代码及说明，不提供其之外的代码或配置  github 地址：https://github.com/ZheningLin/Vue-ListComponents 使用到的技术或框架 Vue.js (2.0) 一套基于 MVVM 的 progressive framework，可以帮助我们迅速搭建用户界面 se">
+<meta property="og:image" content="https://jothy1023.github.io/assets/pic1.png">
+<meta property="og:image" content="https://github.com/ZheningLin/Vue-ListComponents/blob/master/static/pic4.png">
+<meta property="og:updated_time" content="2017-07-12T02:49:43.170Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vue 2.0 制作列表组件，实现分页、搜索、批量操作等">
+<meta name="twitter:description" content="本文仅讲解如何使用 Vue 创建一个实现分页、搜索、批量操作的列表组件，所以只提供此小组件的代码及说明，不提供其之外的代码或配置  github 地址：https://github.com/ZheningLin/Vue-ListComponents 使用到的技术或框架 Vue.js (2.0) 一套基于 MVVM 的 progressive framework，可以帮助我们迅速搭建用户界面 se">
+<meta name="twitter:image" content="https://jothy1023.github.io/assets/pic1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2017/07/12/vue-form/"/>
+
+
+
+
+
+  <title>Vue 2.0 制作列表组件，实现分页、搜索、批量操作等 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2017/07/12/vue-form/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Vue 2.0 制作列表组件，实现分页、搜索、批量操作等</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-12T09:57:37+08:00">
+                2017-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-二级目录/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -二级目录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/07/12/vue-form/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/12/vue-form/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/07/12/vue-form/" class="leancloud_visitors" data-flag-title="Vue 2.0 制作列表组件，实现分页、搜索、批量操作等">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文仅讲解如何使用 Vue 创建一个实现分页、搜索、批量操作的列表组件，所以只提供此小组件的代码及说明，不提供其之外的代码或配置</p>
+</blockquote>
+<p>github 地址：<a href="https://github.com/ZheningLin/Vue-ListComponents" target="_blank" rel="external">https://github.com/ZheningLin/Vue-ListComponents</a></p>
+<h1 id="使用到的技术或框架"><a href="#使用到的技术或框架" class="headerlink" title="使用到的技术或框架"></a>使用到的技术或框架</h1><ul>
+<li>Vue.js (2.0) 一套基于 MVVM 的 progressive framework，可以帮助我们迅速搭建用户界面</li>
+<li>semantic UI 一套漂亮的 UI 框架</li>
+<li>localStorage HTML5 的本地存储 API 之一（另一个为 sessionStorage），顾名思义， localStorage 保存在当前设备内存中，除非主动删除，否则一直存在<a id="more"></a>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1></li>
+<li>安装 Vue 2.0 (rc.6)</li>
+<li>引入 semantic.js 文件</li>
+<li>创建 Audit.vue 文件</li>
+</ul>
+<h1 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h1><p>一个简单的 Vue 组件由三部分组成：html 模板 、javascript 脚本 以及 css 样式。下面我们一一来看。<br>效果图如下：<br><img src="https://jothy1023.github.io/assets/pic1.png" alt="效果图"><br>用到的数据结构是一个简单的 user 对象数组，对象格式为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">user &#123;</div><div class="line">  id: int</div><div class="line">  name: String,</div><div class="line">  audit: int</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中 audit 用来标记是否审核成功，共 4 个状态从 0 到 3，分别为 未审核、正在审核、已审核、审核不通过。</p>
+<h2 id="html-模板"><a href="#html-模板" class="headerlink" title="html 模板"></a>html 模板</h2><p>由一对<template></template>标签作为唯一父标签包裹住模板内容，模板内分为 filter （过滤）、container （主体）两部分。</p>
+<h3 id="container"><a href="#container" class="headerlink" title="container"></a>container</h3><p>container 主体是一个 table 表格，表格内容 tbody 部分使用 Vue 的 v-for 指令，基于 users 数组渲染出列表。主要代码如下<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">tr</span> <span class="attr">v-for</span>=<span class="string">"user in filteredUsers"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">td</span> <span class="attr">class</span>=<span class="string">"collapsing"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"ui toggle slider checkbox"</span> <span class="attr">v-if</span>=<span class="string">"aKey!==''"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"checkbox"</span> <span class="attr">:value</span>=<span class="string">"user"</span> <span class="attr">v-model</span>=<span class="string">"selectedUsers"</span>&gt;</span> <span class="tag">&lt;<span class="name">label</span>&gt;</span><span class="tag">&lt;/<span class="name">label</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; user.id &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; user.name &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">td</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"radio black icon"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==0"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"minus blue icon"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==1"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"checkmark green icon"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==2"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"remove red icon"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==3"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">td</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"primary"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==0"</span> @<span class="attr">click</span>=<span class="string">"user.audit=1"</span>&gt;</span>审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"green"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==1"</span> @<span class="attr">click</span>=<span class="string">"user.audit=2"</span>&gt;</span>通过审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"red"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==1"</span> @<span class="attr">click</span>=<span class="string">"user.audit=3"</span>&gt;</span>不通过审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"grey"</span> <span class="attr">v-if</span>=<span class="string">"user.audit==2 || user.audit==3"</span> @<span class="attr">click</span>=<span class="string">"user.audit=1"</span>&gt;</span>再次审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">td</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">tr</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>其中，filteredUsers 为计算属性 computed 的一个 getter，用于从模板中分理出较复杂的逻辑，此处返回过滤后的 users 。<br>下来有一个 type 为 checkbox 的 input，当按照某一审核要求过滤时显示，其 v-model 指向 selectedUsers 数组，用来保存批量操作中选中的 user ，之后可以直接对此数组进行操作，改动会同步到 users 。</p>
+<h3 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h3><p>filter 部分由一个 input 输入框以及一个 select 选择框组成，分别可以通过用户名和审核状态过滤。具体代码如下：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"filter"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-input</span> <span class="attr">css</span>=<span class="string">"icon"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">v-model</span>=<span class="string">"fKey"</span> <span class="attr">placeholder</span>=<span class="string">"输入姓名搜索.."</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"search icon"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">ui-input</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- dropdown --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">ui-dropdown</span> <span class="attr">:setting</span>=<span class="string">"&#123;allowAdditions: true&#125;"</span> <span class="attr">css</span>=<span class="string">"selection"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"aKey"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">v-model.lazy</span>=<span class="string">"aKey"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"default text"</span>&gt;</span>Select a id<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">"dropdown icon"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"menu"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span> <span class="attr">data-value</span>=<span class="string">""</span>&gt;</span>所有<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span> <span class="attr">data-value</span>=<span class="string">"0"</span>&gt;</span>未审核<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span> <span class="attr">data-value</span>=<span class="string">"1"</span>&gt;</span>正在审核<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span> <span class="attr">data-value</span>=<span class="string">"2"</span>&gt;</span>已审核<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span> <span class="attr">data-value</span>=<span class="string">"3"</span>&gt;</span>审核不通过<span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">ui-dropdown</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>select 使用 semanticUI 的 dropdown 实现，将其 class 设置为 selection。 dropdown 中包含一个 input 标签，此标签属性为 <input name="aKey" type="hidden" v-model.lazy="aKey">，其中，name 对应 v-model 的属性名，负责将值从下面的 .item 中的 data-value 取回并传递。<br>此处有一个地方需要引起注意！！（敲黑板<br>由于此处的 input 标签其实算是 select 组件的，改动时默认行为是 change 而非 input ，也没有输入框，因此就算添加了 v-model 也无法触发。但是添加 @change 却可以正常触发，百思不得姐，经过千难万苦跋山涉水之后，终于发现！！在 Vue 的源码中有这么一断代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> lazy = ref.lazy;</div><div class="line"><span class="keyword">var</span> number = ref.number;</div><div class="line"><span class="keyword">var</span> trim = ref.trim;</div><div class="line"><span class="keyword">var</span> event = lazy || (isIE &amp;&amp; type === <span class="string">'range'</span> ? <span class="string">'change'</span> : <span class="string">'input'</span>);</div></pre></td></tr></table></figure></p>
+<p>我们只关注首末行，噢.. 大意就是，判断有无 lazy 属性（或者在 IE 环境下并且类型为 range ），true 时监听 change 事件，否则监听 input 事件。真相大白啦，机智地给 v-model 加上个小尾巴 .lazy ，hot-loader 马上刷新，一试果然成功了！赞 b(￣▽￣)d<br>P.S: 后来又翻了翻 Vue 的教程，发现尤大大其实在教程中已经说明过了，惹..附图<br><img src="https://github.com/ZheningLin/Vue-ListComponents/blob/master/static/pic4.png" alt="效果图"><br>并且.. 1.0 版本与 2.0 版本也有点细微差别，1.0 是直接写在 input 标签的末尾，而 2.0 必须紧跟 v-model 之后。<br>当二者的 v-model 即 fKey 或 aKey 发生改变时，触发 computed 属性重新计算 filteredUsers ，重新渲染 users 列表，还有个 paginate 为分页方法。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">filteredUsers () &#123;</div><div class="line">  <span class="keyword">let</span> fUsers = <span class="keyword">this</span>.queryFilter(<span class="string">'name'</span>, <span class="keyword">this</span>.fKey, <span class="keyword">this</span>.users)</div><div class="line">  fUsers = <span class="keyword">this</span>.queryFilter(<span class="string">'audit'</span>, <span class="keyword">this</span>.aKey, fUsers)</div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.paginate(fUsers)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="JAVASCRIPT-脚本"><a href="#JAVASCRIPT-脚本" class="headerlink" title="JAVASCRIPT 脚本"></a>JAVASCRIPT 脚本</h2><h3 id="初始数据"><a href="#初始数据" class="headerlink" title="初始数据"></a>初始数据</h3><p>定义了 initialUsers 数组，存进去若干个 user 对象，定义 userStorage 对象，存放 fetch 与 save 方法，分别调用 localStorage 的 getItem 与 setItem 方法向 localStorage 获取及存储数据。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> userStorage</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> STORAGE_KEY = <span class="string">'users'</span>;</div><div class="line">  userStorage = &#123;</div><div class="line">    <span class="attr">fetch</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> <span class="built_in">JSON</span>.parse(localStorage.getItem(STORAGE_KEY)) || initialUsers</div><div class="line">    &#125;,</div><div class="line">    <span class="attr">save</span>: <span class="function"><span class="keyword">function</span> (<span class="params">users</span>) </span>&#123;</div><div class="line">      localStorage.setItem(STORAGE_KEY, <span class="built_in">JSON</span>.stringify(users))</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;</div><div class="line">init(<span class="built_in">window</span>);</div></pre></td></tr></table></figure></p>
+<p>接着是 Vue 实例的各属性方法。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">data () &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">users</span>: userStorage.fetch(), <span class="comment">// users 数据</span></div><div class="line">    selectedUsers: [], <span class="comment">// 保存选中的 users 数组</span></div><div class="line">    fKey: <span class="string">''</span>, <span class="comment">// 过滤 name 的关键字</span></div><div class="line">    name: <span class="string">''</span>, <span class="comment">// 上一次过滤的 name 关键字，初始化为''</span></div><div class="line">    aKey: <span class="string">''</span>, <span class="comment">// select audit 的关键字</span></div><div class="line">    audit: <span class="string">''</span>, <span class="comment">// 上一次过滤的 audit关键字，初始化为''</span></div><div class="line">    limit: <span class="number">10</span>, <span class="comment">// 每页显示行数</span></div><div class="line">    totalPage: <span class="number">0</span>, <span class="comment">// 总页数</span></div><div class="line">    currentPage: <span class="number">0</span>, <span class="comment">// 当前页</span></div><div class="line">    jPage: <span class="number">1</span> <span class="comment">// 跳转到某页</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此处的 name 与 audit 看起来有些多余，其实它是有很重要的作用的，它用于保存上一次过滤的 key与 本次的对比。</p>
+<h3 id="过滤方法-queryFilter"><a href="#过滤方法-queryFilter" class="headerlink" title="过滤方法 queryFilter"></a>过滤方法 queryFilter</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">queryFilter (prop, key, arr) &#123;</div><div class="line">  <span class="comment">// none query string, return arr</span></div><div class="line">  <span class="keyword">if</span> (!key) &#123;</div><div class="line">    <span class="keyword">return</span> arr</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// filtering</span></div><div class="line">  arr = arr.filter(<span class="function">(<span class="params">user</span>) =&gt;</span> &#123;</div><div class="line">    <span class="keyword">if</span> (user[prop].toString().indexOf(key) !== <span class="number">-1</span>) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="literal">true</span> </div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">  <span class="comment">// if it's a new filter query, refilter and turn to page one</span></div><div class="line">  <span class="keyword">if</span> (key !== <span class="keyword">this</span>[prop]) &#123;</div><div class="line">    <span class="keyword">this</span>.currentPage = <span class="number">0</span></div><div class="line">    <span class="comment">// save last filter query</span></div><div class="line">    <span class="keyword">this</span>[prop] = key</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> arr</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个设置应用情境是：未设置这个变量时，若用户在一次搜索之后进行翻页，假设停留在了第 n 页，这时候再重新搜索，页面会停留在本次搜索的结果的第 n 页，非常不方便。因此检测如果重新搜索，则充值 currentPage 属性，记录新的 key 。</p>
+<h3 id="分页方法-paginate"><a href="#分页方法-paginate" class="headerlink" title="分页方法 paginate"></a>分页方法 paginate</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">paginate (arr) &#123;</div><div class="line">  <span class="keyword">this</span>.totalPage = <span class="built_in">Math</span>.ceil(arr.length / <span class="keyword">this</span>.limit)</div><div class="line">  <span class="keyword">let</span> page = <span class="keyword">this</span>.currentPage</div><div class="line">  <span class="keyword">let</span> curLimit = <span class="keyword">this</span>.limit</div><div class="line">  <span class="comment">// 返回指定条数的数组</span></div><div class="line">  arr = arr.slice(curLimit * page, curLimit * (page + <span class="number">1</span>))</div><div class="line">  <span class="keyword">return</span> arr</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此处用到了数组的 slice 方法进行浅复制。</p>
+<h3 id="翻页方法-turnPage"><a href="#翻页方法-turnPage" class="headerlink" title="翻页方法 turnPage"></a>翻页方法 turnPage</h3><p>接受一个数组，1 为向后翻页，-1 为向前翻页</p>
+<ul>
+<li><p>HTML</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"jtp"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">span</span>&gt;</span>跳转到第 <span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">ui-input</span> <span class="attr">css</span>=<span class="string">"icon"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">v-model</span>=<span class="string">"jPage"</span> @<span class="attr">keyup.enter</span>=<span class="string">"jumpToPage"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">ui-input</span>&gt;</span><span class="tag">&lt;<span class="name">span</span>&gt;</span> 页<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Javascript</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">turnPage (num) &#123;</div><div class="line">  <span class="keyword">if</span> (num === <span class="number">1</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.currentPage === <span class="keyword">this</span>.totalPage - <span class="number">1</span>) &#123;</div><div class="line">      <span class="keyword">return</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.currentPage++</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.currentPage === <span class="number">0</span>) &#123;</div><div class="line">      <span class="keyword">return</span></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">this</span>.currentPage--          </div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="单个操作修改-audit"><a href="#单个操作修改-audit" class="headerlink" title="单个操作修改 audit"></a>单个操作修改 audit</h3><p>为单独操作的 button 添加 @click 事件，直接修改</p>
+<h3 id="批量操作方法"><a href="#批量操作方法" class="headerlink" title="批量操作方法"></a>批量操作方法</h3><p>由于 selectedUsers 数组保存了被选中 users 的数据，因此只要调用 setAuditId 方法，传入 selectedUsers 以及要设置的 audit ，遍历 selectedUsers 进行设置即可。代码举例如下：</p>
+<ul>
+<li><p>HTML</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"green"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='1'"</span> @<span class="attr">click</span>=<span class="string">"pass"</span>&gt;</span>通过审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"red"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='1'"</span> @<span class="attr">click</span>=<span class="string">"reject"</span>&gt;</span>不通过审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"small"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='0'"</span> @<span class="attr">click</span>=<span class="string">"approveSel"</span>&gt;</span>审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"small"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='0'"</span> @<span class="attr">click</span>=<span class="string">"approveAll"</span>&gt;</span>全部审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"small"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='2' || aKey==='3'"</span> @<span class="attr">click</span>=<span class="string">"approveSel"</span>&gt;</span>再次审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">ui-button</span> <span class="attr">css</span>=<span class="string">"small"</span> <span class="attr">v-if</span>=<span class="string">"aKey==='2' || aKey==='3'"</span> @<span class="attr">click</span>=<span class="string">"approveAll"</span>&gt;</span>全部再次审核<span class="tag">&lt;/<span class="name">ui-button</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>Javascript</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">pproveSel () &#123;</div><div class="line">  <span class="keyword">this</span>.setAuditId(<span class="keyword">this</span>.selectedUsers, <span class="number">1</span>)</div><div class="line">&#125;,</div><div class="line">approveAll () &#123;</div><div class="line">  <span class="keyword">this</span>.setAuditId(<span class="keyword">this</span>.filteredUsers, <span class="number">1</span>)</div><div class="line">&#125;,</div><div class="line">pass () &#123;</div><div class="line">  <span class="keyword">this</span>.setAuditId(<span class="keyword">this</span>.selectedUsers, <span class="number">2</span>)</div><div class="line">&#125;,</div><div class="line">reject () &#123;</div><div class="line">  <span class="keyword">this</span>.setAuditId(<span class="keyword">this</span>.selectedUsers, <span class="number">3</span>)</div><div class="line">&#125;,</div><div class="line">setAuditId (users, aId) &#123;</div><div class="line">  users.forEach(<span class="function">(<span class="params">user</span>) =&gt;</span> &#123;</div><div class="line">    user.audit = aId</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>此外，还添加了 watch 对 users 进行检测，每当其改变（例如 修改了 audit）时，将新的 users 存入 localStorage 中。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">watch: &#123;</div><div class="line">  <span class="attr">users</span>: &#123;</div><div class="line">    handler () &#123;</div><div class="line">      userStorage.save(<span class="keyword">this</span>.users)</div><div class="line">    &#125;,</div><div class="line">    <span class="attr">deep</span>: <span class="literal">true</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h2><p>这部分其实没什么好说的，基本上都用了 semanticUI 的 css ，只在最后的跳转页码输入框的地方重设了 input 的大小而已。</p>
+<p>至此，整个组件就完成啦~~撒花★,°:.☆(￣▽￣)/$:.°★ 。<br>初试 Vue ，对一些 api 的使用可能有不准确的，有写得不好的地方欢迎指正。</p>
+<p><a href="https://jothy1023.github.io/2016/10/01/vueList/" target="_blank" rel="external">转载自</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/vue2-0/" rel="tag"># --vue2.0</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/28/CSS3-选择器-last-child与last-of-type区别/" rel="next" title="CSS3 选择器 last-child与last-of-type区别">
+                <i class="fa fa-chevron-left"></i> CSS3 选择器 last-child与last-of-type区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用到的技术或框架"><span class="nav-text">使用到的技术或框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#具体实现"><span class="nav-text">具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#html-模板"><span class="nav-text">html 模板</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#container"><span class="nav-text">container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#filter"><span class="nav-text">filter</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JAVASCRIPT-脚本"><span class="nav-text">JAVASCRIPT 脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初始数据"><span class="nav-text">初始数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#过滤方法-queryFilter"><span class="nav-text">过滤方法 queryFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分页方法-paginate"><span class="nav-text">分页方法 paginate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#翻页方法-turnPage"><span class="nav-text">翻页方法 turnPage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单个操作修改-audit"><span class="nav-text">单个操作修改 audit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#批量操作方法"><span class="nav-text">批量操作方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS"><span class="nav-text">CSS</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2017/07/12/vue-form/';
+          this.page.identifier = '2017/07/12/vue-form/';
+          this.page.title = 'Vue 2.0 制作列表组件，实现分页、搜索、批量操作等';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
