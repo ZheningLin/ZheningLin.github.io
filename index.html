@@ -413,7 +413,8 @@
       
         
           
-            <p>很多人都使用过React，但是很少人能说出它内部的渲染原理。有人会说，会用就行了，知道渲染原理有必要么？其实渲染原理决定着性能优化的方法，只有在了解原理之后，才能完全理解为什么这样做可以优化性能。正所谓：知其然，然后知其所以然。</p>
+            <p><img src="https://github.com/ZheningLin/ZheningLin.github.io/blob/master/images/react-render/1.jpg" alt="效果图"></p>
+<p>很多人都使用过React，但是很少人能说出它内部的渲染原理。有人会说，会用就行了，知道渲染原理有必要么？其实渲染原理决定着性能优化的方法，只有在了解原理之后，才能完全理解为什么这样做可以优化性能。正所谓：知其然，然后知其所以然。</p>
 <p>本篇文章，将会分为四部分介绍：</p>
 <p><strong>JSX如何生成element</strong><br>当我们写下一段JSX代码的时候，react是如何根据我们的JSX代码来生成虚拟DOM的组成元素element的。</p>
 <p><strong>element如何生成真实DOM节点</strong></p>
@@ -446,7 +447,7 @@
 <p>#二、element如何生成真实节点<br>顺利得到element之后，我们再来看看React是如何把element转化成真实DOM节点的。</p>
 <p>首先，需要去初始化element,初始化的规则如下：</p>
 <p>先判断是否为Object类型，是的话，看它的type是否是原生DOM标签，是的话，给它创建ReactDOMComponent的实例对象，其他同理。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/meG6Vo0MevhCfAkN4lakQql6ZXyxSZ503jNdEhDfb78BUqGSBJJ9va5DHadoMDbcTUQZ0icPiaKMsRWemq3ZuPtA/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="效果图"></p>
+<p><img src="https://github.com/ZheningLin/ZheningLin.github.io/blob/master/images/react-render/2.jpg" alt="效果图"></p>
 <p>这时候有的人可能会有所疑问：这些个ReactDOMComponent, ReactCompositeComponentWrapper怎么开发的时候都没有见过？</p>
 <p>其实这些都是React的私有类，React自己使用，不会暴露给用户的。它们的常用方法有：mountComponent,updateComponent等。其中mountComponent 用于创建组件，而updateComponent用于用户更新组件。而我们自定义组件的生命周期函数以及render函数都是在这些私有类的方法里被调用的。</p>
 <p>既然这些私有类的方法那么重要我们就先来简单了解一下吧~</p>
@@ -466,7 +467,8 @@
 <p>注意：也就是说他自己是不直接生成DOM节点的。</p>
 <p>那这个递归是一个怎样的过程呢？我们通过首次渲染来看下。</p>
 <p>#首次渲染<br>假设我们有一个Example的组件，它返回<div>hello world</div> 这样一个标签。</p>
-<p>首次渲染的过程如下<br><img src="https://mmbiz.qpic.cn/mmbiz_jpg/meG6Vo0MevhCfAkN4lakQql6ZXyxSZ509JwiaeDiaZnu7ksyV6qaTPQL4icHZhPAF7sbqyglibezib5h9y1VgshbdoA/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="效果图"></p>
+<p>首次渲染的过程如下</p>
+<p><img src="https://github.com/ZheningLin/ZheningLin.github.io/blob/master/images/react-render/3.jpg" alt="效果图"></p>
 <p>首先从React.render开始，由于我们刚刚说，render函数被调用的时候会返回一个element，所以此时返回给我们的element是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  type: function Example,</div><div class="line">  props: &#123;</div><div class="line">    children: null</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>由于这个type是一个自定义组件类，此时要初始化的类是ReactCompositeComponentWrapper,接着调用它的mountComponent方法。这里面会做四件事情，详情可以看上图。其中，第二步的render的得到的element为：</p>
@@ -476,9 +478,10 @@
 <p>这时候它就会去调用ReactCompositeComponentWrapper的mountComponent方法，从而形成了一个递归。不管你的自定义组件嵌套多少层，最后总会生成原生dom类型的element，所以最后一定能调用到ReactDOMComponent的mountComponent方法。</p>
 <p>感兴趣的可以自己在打断点看下这个递归的过程。</p>
 <p>由我打的断点图可以看出在ReactCompositeComponent的mountComponent被调用多次之后，最后调用到了ReactDOMComponent的mountComponent方法。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/meG6Vo0MevhCfAkN4lakQql6ZXyxSZ50icFBq0UAvJsD5KLcu7ClNia2pBWuHNt1Vtol2AfALV3MGhUe9qPpRgbg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="效果图"><br>到这里，首次渲染的过程就基本讲完了:-D。</p>
+<p><img src="https://github.com/ZheningLin/ZheningLin.github.io/blob/master/images/react-render/4.jpg" alt="效果图"></p>
+<p>到这里，首次渲染的过程就基本讲完了:-D。</p>
 <p>但是还有一个问题：前面我们说自定义组件的生命周期跟render函数都是在私有类的方法里被调用的，现在只看到render函数被调用了，那么首次渲染时候生命周期函数 componentWillMount 跟 componentDidMount 在哪被调用呢？</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/meG6Vo0MevhCfAkN4lakQql6ZXyxSZ509JwiaeDiaZnu7ksyV6qaTPQL4icHZhPAF7sbqyglibezib5h9y1VgshbdoA/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="效果图"></p>
+<p><img src="https://github.com/ZheningLin/ZheningLin.github.io/blob/master/images/react-render/5.jpg" alt="效果图"></p>
 <p>由图可知，在第一步得到instance对象之后，就会去看instance.componentWillMount是否有被定义，有的话调用，而在整个渲染过程结束之后调用componentDidMount。</p>
 <p>以上，就是渲染原理的部分，让我们来总结以下：</p>
 <p>JSX代码经过babel编译之后变成React.createElement的表达式，这个表达式在render函数被调用的时候执行生成一个element。</p>
