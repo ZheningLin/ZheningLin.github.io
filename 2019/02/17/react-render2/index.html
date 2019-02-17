@@ -90,21 +90,21 @@
 
 
 
-<meta name="description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。 触发组件的更新有两种更新方式：props以及state改变带来的更新。本次主要解析state改变带来的更新。整个过程流程图如下：">
+<meta name="description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。">
 <meta name="keywords" content="--react">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React从渲染原理到性能优化（二）-- 更新渲染">
 <meta property="og:url" content="http://ZheningLin.github.io/2019/02/17/react-render2/index.html">
 <meta property="og:site_name" content="Jacob&#39;s Notes">
-<meta property="og:description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。 触发组件的更新有两种更新方式：props以及state改变带来的更新。本次主要解析state改变带来的更新。整个过程流程图如下：">
+<meta property="og:description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。">
 <meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/1.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-1.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-2.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-3.jpg">
-<meta property="og:updated_time" content="2019-02-17T05:29:03.216Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-1.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-2.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-3.jpeg">
+<meta property="og:updated_time" content="2019-02-17T05:38:24.076Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React从渲染原理到性能优化（二）-- 更新渲染">
-<meta name="twitter:description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。 触发组件的更新有两种更新方式：props以及state改变带来的更新。本次主要解析state改变带来的更新。整个过程流程图如下：">
+<meta name="twitter:description" content="#二、element如何生成真实DOM节点 上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/1.jpg">
 
 
@@ -416,12 +416,12 @@
       
         <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/1.jpg" alt="效果图"></p>
 <p>#二、element如何生成真实DOM节点</p>
-<p>上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。</p>
-<p>触发组件的更新有两种更新方式：props以及state改变带来的更新。本次主要解析state改变带来的更新。整个过程流程图如下：<br><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-1.jpg" alt="效果图"><br><a id="more"></a><br>1、一般改变state，都是从setState开始，这个函数被调用之后，会将我们传入的state放进pendingState的数组里存起来，然后判断当前流程是否处于批量更新，如果是，则将当前组件的instance放进dirtyComponent里，当这个更新流程中所有需要更新的组件收集完毕之后（这里面涉及到事务的概念，感兴趣的可以自己去了解一下）就会遍历dirtyComponent这个数组，调用他们的uptateComponent对组件进行更新。当然，如果当前不处于批量更新的状态，会直接去遍历dirtyComponent进行更新。</p>
+<p>上篇文章介绍了首次渲染的过程，接下来我们来看更新渲染的过程。<br><a id="more"></a><br>触发组件的更新有两种更新方式：props以及state改变带来的更新。本次主要解析state改变带来的更新。整个过程流程图如下：<br><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-1.jpeg" alt="效果图"></p>
+<p>1、一般改变state，都是从setState开始，这个函数被调用之后，会将我们传入的state放进pendingState的数组里存起来，然后判断当前流程是否处于批量更新，如果是，则将当前组件的instance放进dirtyComponent里，当这个更新流程中所有需要更新的组件收集完毕之后（这里面涉及到事务的概念，感兴趣的可以自己去了解一下）就会遍历dirtyComponent这个数组，调用他们的uptateComponent对组件进行更新。当然，如果当前不处于批量更新的状态，会直接去遍历dirtyComponent进行更新。</p>
 <p>2、在我们这个例子中，由于Example是自定义组件，所以调用的是ReactCompositeComponentWrapper这个类的updateComponent方法，这个方法做三件事。</p>
 <p>计算出nextState<br>render()得到nextRenderElement<br>与prevElement 进行Diff 比较（这个过程后面会介绍）,更新节点<br>最后这个需要去更新节点的时候，跟首次渲染一样，也需要调用ReactDOMComponent的updateComponent来更新。其中第二步render得到的也是自定义组件的话， 会形成递归调用。</p>
 <p>接下来，还是上次的问题：那么更新过程中的生命周期函数，shouldComponentUpdate,componentWillUpdate跟componentDidUpdate在哪被调用呢？</p>
-<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-2.jpg" alt="效果图"></p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-2.jpeg" alt="效果图"></p>
 <p><strong>shouldComponentUpdate</strong></p>
 <p>由图可知，shouldComponentUpdate在第一步调用得到nextState之后调用，因为nextState也是它的其中一个参数嘛~这个函数很重要，它是我们性能优化的一个很关键的点：由图可以看到，当shouldComponentUpdate返回false的时候，下面的一大块都不会被去执行，包括已经被优化的diff算法。</p>
 <p>当shouldComponentUpdate返回true的时候，会先调用componentWillUpdate，在整个更新过程结束之后调用componentDidUpdate。</p>
@@ -431,7 +431,7 @@
 <p>React基于两个假设：</p>
 <p>两个相同的组件产生类似的DOM结构，不同组件产生不同DOM结构<br>对于同一层次的一组子节点，它们可以通过唯一的id区分<br>发明了一种叫Diff的算法来比较两棵DOM tree，它极大的优化了这个比较的过程，将算法复杂度从O(n^3)降低到O(n)。</p>
 <p>同时，基于第一点假设，我们可以推论出，Diff算法只会对同层的节点进行比较。如图，它只会对颜色相同的节点进行比较。</p>
-<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-3.jpg" alt="效果图"></p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-render/2-3.jpeg" alt="效果图"></p>
 <p>也就是说如果父节点不同，React将不会在去对比子节点。因为不同的组件DOM结构会不相同，所以就没有必要在去对比子节点了。这也提高了对比的效率。</p>
 <p>下面，我们具体看下Diff算法是怎么做的，这里分为三种情况考虑</p>
 <ul>
