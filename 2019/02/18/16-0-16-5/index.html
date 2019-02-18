@@ -1,0 +1,1089 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--react," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="目录1.生命周期函数的更新2.全新的 Context API3.React Strict Mode4.Portal5.Refs6.Fragment7.其他8.总结">
+<meta name="keywords" content="--react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="盘点 React 16.0 ~ 16.5 主要更新及其应用">
+<meta property="og:url" content="http://ZheningLin.github.io/2019/02/18/16-0-16-5/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="目录1.生命周期函数的更新2.全新的 Context API3.React Strict Mode4.Portal5.Refs6.Fragment7.其他8.总结">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/bg.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/1.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/3.jpeg">
+<meta property="og:updated_time" content="2019-02-18T15:36:40.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="盘点 React 16.0 ~ 16.5 主要更新及其应用">
+<meta name="twitter:description" content="目录1.生命周期函数的更新2.全新的 Context API3.React Strict Mode4.Portal5.Refs6.Fragment7.其他8.总结">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/bg.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2019/02/18/16-0-16-5/"/>
+
+
+
+
+
+  <title>盘点 React 16.0 ~ 16.5 主要更新及其应用 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2019/02/18/16-0-16-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">盘点 React 16.0 ~ 16.5 主要更新及其应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-18T23:06:22+08:00">
+                2019-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-二级目录/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -二级目录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/18/16-0-16-5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/02/18/16-0-16-5/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/02/18/16-0-16-5/" class="leancloud_visitors" data-flag-title="盘点 React 16.0 ~ 16.5 主要更新及其应用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/bg.jpg" alt="效果图"></p>
+<p><strong>目录</strong><br>1.生命周期函数的更新<br>2.全新的 Context API<br>3.React Strict Mode<br>4.Portal<br>5.Refs<br>6.Fragment<br>7.其他<br>8.总结<br><a id="more"></a></p>
+<h1 id="一、生命周期函数的更新"><a href="#一、生命周期函数的更新" class="headerlink" title="一、生命周期函数的更新"></a>一、生命周期函数的更新</h1><p>随着 React 16.0 发布, React 采用了新的内核架构 Fiber，在新的架构中它将更新分为两个阶段：Render Parse 和 Commit Parse， 也由此引入了 getDerivedStateFromProps 、 getSnapshotBeforeUpdate 及 componentDidCatch 等三个生命周期函数。同时，也将 componentWillMount、componentWillReceiveProps 和 componentWillUpdate 标记为不安全的方法。</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/1.jpeg" alt="效果图"></p>
+<p><strong>新增</strong></p>
+<ul>
+<li>static getDerivedStateFromProps(nextProps, prevState)</li>
+<li>getSnapshotBeforeUpdate(prevProps, prevState)</li>
+<li>componentDidCatch(error, info)</li>
+</ul>
+<p><strong>标为不安全</strong></p>
+<ul>
+<li>componentWillMount(nextProps, nextState)</li>
+<li>componentWillReceiveProps(nextProps)</li>
+<li>componentWillUpdate(nextProps, nextState)</li>
+</ul>
+<p><strong>static getDerivedStateFromProps(nextProps, prevState)</strong><br>根据 getDerivedStateFromProps(nextProps, prevState) 的函数签名可知: 其作用是根据传递的 props 来更新 state。它的一大特点是 无副作用 : 由于处在 Render Phase 阶段，所以在每次的更新都要触发， 故在设计 API 时采用了静态方法，其好处是单纯 —— 无法访问实例、无法通过 ref 访问到 DOM 对象等，保证了单纯且高效。值得注意的是，其仍可以通过 props 的操作来产生副作用，这时应该将操作 props 的方法移到 componentDidUpdate 中，减少触发次数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">state = &#123; isLogin: false &#125;</div><div class="line">static getDerivedStateFromProps(nextProps, prevState) &#123;</div><div class="line">  if(nextProps.isLogin !== prevState.isLogin)&#123;</div><div class="line">    return &#123;</div><div class="line">      isLogin: nextProps.isLogin</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  return null</div><div class="line">&#125;</div><div class="line">componentDidUpdate(prevProps, prevState)&#123;</div><div class="line">  if(!prevState.isLogin &amp;&amp; prevProps.isLogin) this.handleClose()</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>但在使用时要非常小心，因为它不像 componentWillReceiveProps 一样，只在父组件重新渲染时才触发，本身调用 setState 也会触发。官方提供了 3 条 checklist, 这里搬运一下：</p>
+<ul>
+<li>如果改变 props 的同时，有副作用的产生(如异步请求数据，动画效果)，这时应该使用 componentDidUpdate</li>
+<li>如果想要根据 props 计算属性，应该考虑将结果 memoization 化，参见 memoization</li>
+<li>如果想要根据 props 变化来重置某些状态，应该考虑使用受控组件</li>
+</ul>
+<p>配合 componentDidUpdate 周期函数，getDerivedStateFromProps 是为了替代 componentWillReceiveProps 而出现的。它将原本 componentWillReceiveProps 功能进行划分 —— 更新 state 和 操作/调用 props，很大程度避免了职责不清而导致过多的渲染, 从而影响应该性能。</p>
+<p><strong>getSnapshotBeforeUpdate(prevProps, prevState)</strong></p>
+<p>根据 getSnapshotBeforeUpdate(prevProps, prevState) 的函数签名可知，其在组件更新之前获取一个 snapshot —— 可以将计算得的值或从 DOM 得到的信息传递到 componentDidUpdate(prevProps, prevState, snapshot) 周期函数的第三个参数，常常用于 scroll 位置的定位。摘自官方的示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">class ScrollingList extends React.Component &#123;</div><div class="line">  constructor(props) &#123;</div><div class="line">    super(props)</div><div class="line">    // 取得dom 节点</div><div class="line">    this.listRef = React.createRef()</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  getSnapshotBeforeUpdate(prevProps, prevState) &#123;</div><div class="line">    // 根据新添加的元素来计算得到所需要滚动的位置</div><div class="line">    if (prevProps.list.length &lt; this.props.list.length) &#123;</div><div class="line">      const list = this.listRef.current</div><div class="line">      return list.scrollHeight - list.scrollTop</div><div class="line">    &#125;</div><div class="line">    return null</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  componentDidUpdate(prevProps, prevState, snapshot) &#123;</div><div class="line">    // 根据 snapshot 计算得到偏移量，得到最终滚动位置</div><div class="line">    if (snapshot !== null) &#123;</div><div class="line">      const list = this.listRef.current</div><div class="line">      list.scrollTop = list.scrollHeight - snapshot</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    return &lt;div ref=&#123;this.listRef&#125;&gt;&#123;/* ...contents... */&#125;&lt;/div&gt;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>componentDidCatch</strong><br>在 16.0 以前，错误捕获使用 unstable_handleError 或者采用第三方库如 react-error-overlay 来捕获，前者捕获的信息十分有限，后者为非官方支持。而在 16.0 中，增加了 componentDidCatch 周期函数来让开发者可以自主处理错误信息，诸如展示，上报错误等，用户可以创建自己的Error Boundary 来捕获错误。例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">componentDidCatch(error, info) &#123;</div><div class="line">    // Display fallback UI</div><div class="line">    this.setState(&#123; hasError: true &#125;);</div><div class="line">    // You can also log the error to an error reporting service</div><div class="line">    logErrorToMyService(error, info);</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>此外，用户还可以采用第三方错误追踪服务，如 Sentry、Bugsnag 等，保证了错误处理效率的同时也极大降级了中小型项目错误追踪的成本。</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/2.png" alt="效果图"></p>
+<p><strong>标记为不安全 componentWillMount、componentWillReceiveProps、componentWillUpdate</strong></p>
+<p><strong>componentWillMount</strong><br>componentWillMount 可被开发者用于获取首屏数据或事务订阅。</p>
+<p>开发者为了快速得到数据，将首屏请求放在 componentWillMount中。实际上在执行 componentWillMount时第一次渲染已开始。把首屏请求放在componentWillMount 的与否都不能解决首屏渲染无异步数据的问题。而官方的建议是将首屏放在 constructor 或 componentDidMount中。</p>
+<p>此外事件订阅也被常在 componentWillMount 用到，并在 componentWillUnmount 中取消掉相应的事件订阅。但事实上 React 并不能够保证在 componentWillMount 被调用后，同一组件的 componentWillUnmount 也一定会被调用。另一方面，在未来 React 开启异步渲染模式后，在 · 被调用之后，组件的渲染也很有可能会被其他的事务所打断，导致 componentWillUnmount 不会被调用。而 componentDidMount 就不存在这个问题，在 componentDidMount 被调用后，componentWillUnmount 一定会随后被调用到，并根据具体代码清除掉组件中存在的事件订阅。</p>
+<p>对此的升级方案是把 componentWillMount 改为 componentDidMount 即可。</p>
+<p><strong>componentWillReceiveProps、componentWillUpdate</strong></p>
+<p>componentWillReceiveProps 被标记为不安全的原因见前文所述，其主要原因是操作 props 引起的 re-render。与之类似的 componentWillUpdate 被标记为不安全也是同样的原因。除此之外，对 DOM 的更新操作也可能导致重新渲染。</p>
+<p>对于 componentWillReceiveProps 的升级方案是使用 getDerivedStateFromProps 和 componentDidUpdate 来代替。 对于 componentWillUpdate 的升级方案是使用 componentDidUpdate 代替。如涉及大量的计算，可在 getSnapshotBeforeUpdate 完成计算，再在 componentDidUpdate 一次完成更新。</p>
+<p>通过框架级别的 API 来约束甚至限制开发者写出更易维护的 Javascript 代码，最大限度的避免了反模式的开发方式。</p>
+<h1 id="二、全新的-Context-API"><a href="#二、全新的-Context-API" class="headerlink" title="二、全新的 Context API"></a>二、全新的 Context API</h1><p>在 React 16.3 之前，Context API 一直被官方置为不推荐使用(don’t use context），究其原因是因为老的 Context API 作为一个实验性的产品，破坏了 React 的分形结构。同时在使用的过程中，如果在穿透组件的过程中，某个组件的 shouldComponentUpdate 返回了 false, 则 Context API 就不能穿透了。其带来的不确定性也就导致被不推荐使用。随着 React 16.3 的发布，全新 Context API 成了一等 API，可以很容易穿透组件而无副作用，官方示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">// Context lets us pass a value deep into the component tree</div><div class="line">// without explicitly threading it through every component.</div><div class="line">// Create a context for the current theme (with &quot;light&quot; as the default).</div><div class="line">const ThemeContext = React.createContext(&apos;light&apos;)</div><div class="line">class App extends React.Component &#123;</div><div class="line">  render() &#123;</div><div class="line">    // Use a Provider to pass the current theme to the tree below.</div><div class="line">    // Any component can read it, no matter how deep it is.</div><div class="line">    // In this example, we&apos;re passing &quot;dark&quot; as the current value.</div><div class="line">    return (</div><div class="line">      &lt;ThemeContext.Provider value=&quot;dark&quot;&gt;</div><div class="line">        &lt;Toolbar /&gt;</div><div class="line">      &lt;/ThemeContext.Provider&gt;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">// A component in the middle doesn&apos;t have to</div><div class="line">// pass the theme down explicitly anymore.</div><div class="line">function Toolbar(props) &#123;</div><div class="line">  return (</div><div class="line">    &lt;div&gt;</div><div class="line">      &lt;ThemedButton /&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">  )</div><div class="line">&#125;</div><div class="line">function ThemedButton(props) &#123;</div><div class="line">  // Use a Consumer to read the current theme context.</div><div class="line">  // React will find the closest theme Provider above and use its value.</div><div class="line">  // In this example, the current theme is &quot;dark&quot;.</div><div class="line">  return (</div><div class="line">    &lt;ThemeContext.Consumer&gt;&#123;theme =&gt; &lt;Button &#123;...props&#125; theme=&#123;theme&#125; /&gt;&#125;&lt;/ThemeContext.Consumer&gt;</div><div class="line">  )</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其过程大概如下：</p>
+<ul>
+<li>通过 React.createContext 创建 Context 对象</li>
+<li>在父组件上，使用<themecontext.provider> 来提供 Provider</themecontext.provider></li>
+<li>在需要消费的地方，使用<themecontext.consumer> 以函数调用的方式{theme =&gt; <button {...props}="" theme="{theme}">}获得 Context 对象的值。</button></themecontext.consumer></li>
+</ul>
+<p><strong>Context API 与 Redux</strong><br>在状态的管理上，全新的 Context API 完全可以取代部分 Redux 应用，示例代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">const initialState = &#123;</div><div class="line">  theme: &apos;dark&apos;,</div><div class="line">  color: &apos;blue&apos;,</div><div class="line">&#125;</div><div class="line">const GlobalStore = React.createContext()</div><div class="line">class GlobalStoreProvider extends React.Component &#123;</div><div class="line">  render() &#123;</div><div class="line">    return (</div><div class="line">      &lt;GlobalStore.Provider value=&#123;&#123; ...initialState &#125;&#125;&gt;&#123;this.props.children&#125;&lt;/GlobalStore.Provider&gt;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">class App extends React.Component &#123;</div><div class="line">  render() &#123;</div><div class="line">    return (</div><div class="line">      &lt;GlobalStoreProvider&gt;</div><div class="line">        &lt;GlobalStore.Consumer&gt;</div><div class="line">          &#123;context =&gt; (</div><div class="line">            &lt;div&gt;</div><div class="line">              &lt;div&gt;&#123;context.theme&#125;&lt;/div&gt;</div><div class="line">              &lt;div&gt;&#123;context.color&#125;&lt;/div&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">          )&#125;</div><div class="line">        &lt;/GlobalStore.Consumer&gt;</div><div class="line">      &lt;/GlobalStoreProvider&gt;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>全新的 Context API 带来的穿透组件的能力对于需要全局状态共享的场景十分有用，无需进入额外的依赖就能对状态进行管理，代码简洁明了。</p>
+<h1 id="三、React-Strict-Mode"><a href="#三、React-Strict-Mode" class="headerlink" title="三、React Strict Mode"></a>三、React Strict Mode</h1><p>React StrictMode 可以在开发阶段发现应用存在的潜在问题，提醒开发者解决相关问题，提供应用的健壮性。其主要能检测到 4 个问题：</p>
+<ul>
+<li>识别被标志位不安全的生命周期函数</li>
+<li>对弃用的 API 进行警告</li>
+<li>探测某些产生副作用的方法</li>
+<li>检测是否采用了老的 Context API</li>
+</ul>
+<p>使用起来也很简单，只要在需要被检测的组件上包裹一层 React StrictMode ，示例代码 React-StrictMode：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">class App extends React.Component &#123;</div><div class="line">  render() &#123;</div><div class="line">    return (</div><div class="line">      &lt;div&gt;</div><div class="line">        &lt;React.StrictMode&gt;</div><div class="line">          &lt;ComponentA /&gt;</div><div class="line">        &lt;/React.StrictMode&gt;</div><div class="line">      &lt;/div&gt;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>若出现错误，则在控制台输出具体错误信息：</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-update/3.jpeg" alt="效果图"></p>
+<h1 id="四、Portal"><a href="#四、Portal" class="headerlink" title="四、Portal"></a>四、Portal</h1><p>由 ReactDOM 提供的 createPortal 方法，允许将组件渲染到其他 DOM 节点上。这对大型应用或者独立于应用本身的渲染很有帮助。其函数签名为 ReactDOM.createPortal(child, container), child 参数为任意的可渲染的 React Component，如 element、sting、fragment 等，container 则为要挂载的 DOM 节点.</p>
+<p>以一个简单的 Modal 为例, 代码见 Portal Modal :<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">import React from &apos;react&apos;</div><div class="line">import ReactDOM from &apos;react-dom&apos;</div><div class="line">const modalRoot = document.querySelector(&apos;#modal&apos;)</div><div class="line">export default class Modal extends React.Component &#123;</div><div class="line">  constructor(props) &#123;</div><div class="line">    super(props)</div><div class="line">    this.el = document.createElement(&apos;div&apos;)</div><div class="line">  &#125;</div><div class="line">  componentDidMount() &#123;</div><div class="line">    modalRoot.appendChild(this.el)</div><div class="line">  &#125;</div><div class="line">  componentWillUnmount() &#123;</div><div class="line">    modalRoot.removeChild(this.el)</div><div class="line">  &#125;</div><div class="line">  handleClose = () =&gt; [this.props.onClose &amp;&amp; this.props.onClose()]</div><div class="line">  render() &#123;</div><div class="line">    const &#123; visible &#125; = this.props</div><div class="line">    if (!visible) return null</div><div class="line"></div><div class="line">    return ReactDOM.createPortal(</div><div class="line">      &lt;div&gt;</div><div class="line">        &#123;this.props.children&#125;</div><div class="line">        &lt;span onClick=&#123;this.handleClose&#125;&gt;[x]&lt;/span&gt;</div><div class="line">      &lt;/div&gt;,</div><div class="line">      this.el</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>具体过程就是使用了 props 传递 children后， 使用 ReactDOM.createPortal, 将 container 渲染在其他 DOM 节点上的过程。</p>
+<h1 id="五、Refs"><a href="#五、Refs" class="headerlink" title="五、Refs"></a>五、Refs</h1><p>虽然 React 使用 Virtual DOM 来更新视图，但某些时刻我们还要操作真正的 DOM ，这时 ref 属性就派上用场了。</p>
+<p><strong>React.createRef</strong><br>React 16 使用了 React.createRef 取得 Ref 对象，这和之前的方式还是有不小的差别，例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">// before React 16</div><div class="line">···</div><div class="line">  componentDidMount() &#123;</div><div class="line">    // the refs object container the myRef</div><div class="line">    const el = this.refs.myRef</div><div class="line">    // you can  also using ReactDOM.findDOMNode</div><div class="line">    // const el = ReactDOM.findDOMNode(this.refs.myRef)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    return &lt;div ref=&quot;myRef&quot; /&gt;</div><div class="line">  &#125;</div><div class="line">···</div><div class="line">···</div><div class="line">// React 16+</div><div class="line">  constructor(props) &#123;</div><div class="line">    super(props)</div><div class="line">    this.myRef = React.createRef()</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    return &lt;div ref=&#123;this.myRef&#125; /&gt;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p><strong>React.forwardRef</strong><br>另外一个新特性是 Ref 的转发, 它的目的是让父组件可以访问到子组件的 Ref，从而操作子组件的 DOM。 React.forwardRef 接收一个函数，函数参数有 props 和 ref。看一个简单的例子，代码见 Refs:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">const TextInput = React.forwardRef((props, ref) =&gt; (</div><div class="line">  &lt;input type=&quot;text&quot; placeholder=&quot;Hello forwardRef&quot; ref=&#123;ref&#125; /&gt;</div><div class="line">))</div><div class="line">const inputRef = React.createRef()</div><div class="line">class App extends Component &#123;</div><div class="line">  constructor(props) &#123;</div><div class="line">    super(props)</div><div class="line">    this.myRef = React.createRef()</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  handleSubmit = event =&gt; &#123;</div><div class="line">    event.preventDefault()</div><div class="line">    alert(&apos;input value is:&apos; + inputRef.current.value)</div><div class="line">  &#125;</div><div class="line">  render() &#123;</div><div class="line">    return (</div><div class="line">      &lt;form onSubmit=&#123;this.handleSubmit&#125;&gt;</div><div class="line">        &lt;TextInput ref=&#123;inputRef&#125; /&gt;</div><div class="line">        &lt;button type=&quot;submit&quot;&gt;Submit&lt;/button&gt;</div><div class="line">      &lt;/form&gt;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个例子使用了 React.forwardRef 将 props 和 ref 传递给子组件，直接就可以在父组件直接调用。</p>
+<h1 id="六、Fragment"><a href="#六、Fragment" class="headerlink" title="六、Fragment"></a>六、Fragment</h1><p>在向 DOM 树批量添加元素时，一个好的实践是创建一个document.createDocumentFragment，先将元素批量添加到 DocumentFragment 上，再把 DocumentFragment 添加到 DOM 树，减少了 DOM 操作次数的同时也不会创建一个新元素。</p>
+<p>和 DocumentFragment 类似，React 也存在 Fragment 的概念，用途很类似。在 React 16 之前，Fragment 的创建是通过扩展包 react-addons-create-fragment 创建，而 React 16 中则通过 <react.fragment></react.fragment> 直接创建 ‘Fragment’。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">render() &#123;</div><div class="line">  return (</div><div class="line">    &lt;React.Fragment&gt;</div><div class="line">      &lt;ChildA /&gt;</div><div class="line">      &lt;ChildB /&gt;</div><div class="line">      &lt;ChildC /&gt;</div><div class="line">    &lt;/React.Fragment&gt;</div><div class="line">  )</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如此，我们不需要单独包裹一层无用的元素(如使用<div></div>包裹)，减少层级嵌套。 此外，还一种精简的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">render() &#123;</div><div class="line">  return (</div><div class="line">    &lt;&gt;</div><div class="line">      &lt;ChildA /&gt;</div><div class="line">      &lt;ChildB /&gt;</div><div class="line">      &lt;ChildC /&gt;</div><div class="line">    &lt;/&gt;</div><div class="line">  )</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="七、其他"><a href="#七、其他" class="headerlink" title="七、其他"></a>七、其他</h1><p><strong>ReactDOM 的 render 函数可以数组形式返回 React Component</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">render()&#123;</div><div class="line">  return [</div><div class="line">    &lt;ComponentA key=&apos;A&apos; /&gt;,</div><div class="line">    &lt;ComponentB key=&apos;B&apos; /&gt;,</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>移除内建的react-with-addons.js, 所有的插件都独立出来</strong><br>之前常用的react-addons-(css-)transition-group,react-addons-create-fragment,react-addons-pure-render-mixin、react-addons-perf 等，除部分被内置，其余全部都独立为一个项目，使用时要注意。</p>
+<h1 id="八、总结"><a href="#八、总结" class="headerlink" title="八、总结"></a>八、总结</h1><p>窥一斑而见全豹，React 16.0 ~ 16.5 的升级给了开发者一个更为纯粹的开发流程。API 层面的更改、架构的更替、工具类的拆分都在为构建更易维护的 JavaScript 应用而努力。拥抱变化，顺应时势。</p>
+<p><strong>参考</strong></p>
+<ul>
+<li>React Docs</li>
+<li>Update on Async Rendering</li>
+<li>You Probably Don’t Need Derived State</li>
+<li>React v16.3 版本新生命周期函数浅析及升级方案</li>
+<li>React 16: A look inside an API-compatible rewrite of our frontend UI library</li>
+<li>React Fiber Architecture</li>
+</ul>
+<p>本文引用自 <a href="https://zhuanlan.zhihu.com/p/44452592" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/44452592</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># --react</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/17/react-render2/" rel="next" title="React从渲染原理到性能优化（二）-- 更新渲染">
+                <i class="fa fa-chevron-left"></i> React从渲染原理到性能优化（二）-- 更新渲染
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、生命周期函数的更新"><span class="nav-text">一、生命周期函数的更新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、全新的-Context-API"><span class="nav-text">二、全新的 Context API</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、React-Strict-Mode"><span class="nav-text">三、React Strict Mode</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、Portal"><span class="nav-text">四、Portal</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、Refs"><span class="nav-text">五、Refs</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、Fragment"><span class="nav-text">六、Fragment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、其他"><span class="nav-text">七、其他</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、总结"><span class="nav-text">八、总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2019/02/18/16-0-16-5/';
+          this.page.identifier = '2019/02/18/16-0-16-5/';
+          this.page.title = '盘点 React 16.0 ~ 16.5 主要更新及其应用';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
