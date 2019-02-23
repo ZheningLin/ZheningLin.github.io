@@ -1,0 +1,1086 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--react  react-router," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="在 web 应用开发中，路由系统是不可或缺的一部分。在浏览器当前的 URL 发生变化时，路由系统会做出一些响应，用来保证用户界面与 URL 的同步。随着单页应用时代的到来，为之服务的前端路由系统也相继出现了。有一些独立的第三方路由系统，比如 director，代码库也比较轻量。当然，主流的前端框架也都有自己的路由，比如 Backbone、Ember、Angular、React 等等。那 reac">
+<meta name="keywords" content="--react  react-router">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解 react-router 路由系统">
+<meta property="og:url" content="http://ZheningLin.github.io/2019/02/23/react-router/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="在 web 应用开发中，路由系统是不可或缺的一部分。在浏览器当前的 URL 发生变化时，路由系统会做出一些响应，用来保证用户界面与 URL 的同步。随着单页应用时代的到来，为之服务的前端路由系统也相继出现了。有一些独立的第三方路由系统，比如 director，代码库也比较轻量。当然，主流的前端框架也都有自己的路由，比如 Backbone、Ember、Angular、React 等等。那 reac">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/bg.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/4.png">
+<meta property="og:updated_time" content="2019-02-23T14:38:54.735Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解 react-router 路由系统">
+<meta name="twitter:description" content="在 web 应用开发中，路由系统是不可或缺的一部分。在浏览器当前的 URL 发生变化时，路由系统会做出一些响应，用来保证用户界面与 URL 的同步。随着单页应用时代的到来，为之服务的前端路由系统也相继出现了。有一些独立的第三方路由系统，比如 director，代码库也比较轻量。当然，主流的前端框架也都有自己的路由，比如 Backbone、Ember、Angular、React 等等。那 reac">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/bg.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2019/02/23/react-router/"/>
+
+
+
+
+
+  <title>深入理解 react-router 路由系统 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2019/02/23/react-router/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解 react-router 路由系统</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-23T22:11:26+08:00">
+                2019-02-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-二级目录/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -二级目录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/23/react-router/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/02/23/react-router/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/02/23/react-router/" class="leancloud_visitors" data-flag-title="深入理解 react-router 路由系统">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/bg.jpg" alt="效果图"></p>
+<p>在 web 应用开发中，路由系统是不可或缺的一部分。在浏览器当前的 URL 发生变化时，路由系统会做出一些响应，用来保证用户界面与 URL 的同步。随着单页应用时代的到来，为之服务的前端路由系统也相继出现了。有一些独立的第三方路由系统，比如 director，代码库也比较轻量。当然，主流的前端框架也都有自己的路由，比如 Backbone、Ember、Angular、React 等等。那 react-router 相对于其他路由系统又针对 React 做了哪些优化呢？它是如何利用了 React 的 UI 状态机特性呢？又是如何将 JSX 这种声明式的特性用在路由中？<br><a id="more"></a></p>
+<h1 id="一、一个简单的示例"><a href="#一、一个简单的示例" class="headerlink" title="一、一个简单的示例"></a>一、一个简单的示例</h1><p>现在，我们通过一个简易的博客系统示例来解释刚刚遇到的疑问，它包含了查看文章归档、文章详细、登录、退出以及权限校验几个功能，该系统的完整代码托管在 JS Bin（注意，文中示例代码使用了与之对应的 ES6 语法），你可以点击链接查看。此外，该实例全部基于最新的 react-router 1.0 进行编写。下面看一下 react-router 的应用实例：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</div><div class="line"><span class="keyword">import</span> &#123; render, findDOMNode &#125; <span class="keyword">from</span> <span class="string">'react-dom'</span>;</div><div class="line"><span class="keyword">import</span> &#123; Router, Route, Link, IndexRoute, Redirect &#125; <span class="keyword">from</span> <span class="string">'react-router'</span>;</div><div class="line"><span class="keyword">import</span> &#123; createHistory, createHashHistory, useBasename &#125; <span class="keyword">from</span> <span class="string">'history'</span>;</div><div class="line"></div><div class="line"><span class="comment">// 此处用于添加根路径</span></div><div class="line"><span class="keyword">const</span> history = useBasename(createHashHistory)(&#123;</div><div class="line">  <span class="attr">queryKey</span>: <span class="string">'_key'</span>,</div><div class="line">  <span class="attr">basename</span>: <span class="string">'/blog-app'</span>,</div><div class="line">&#125;);</div><div class="line"></div><div class="line">React.render((</div><div class="line">  &lt;Router history=&#123;history&#125;&gt;</div><div class="line">    &lt;Route path="/" component=&#123;BlogApp&#125;&gt;</div><div class="line">      &lt;IndexRoute component=&#123;SignIn&#125;/&gt;</div><div class="line">      &lt;Route path="signIn" component=&#123;SignIn&#125;/&gt;</div><div class="line">      &lt;Route path="signOut" component=&#123;SignOut&#125;/&gt;</div><div class="line">      &lt;Redirect from="/archives" to="/archives/posts"/&gt;</div><div class="line">      &lt;Route onEnter=&#123;requireAuth&#125; path="archives" component=&#123;Archives&#125;&gt;</div><div class="line">        &lt;Route path="posts" components=&#123;&#123;</div><div class="line">          original: Original,</div><div class="line">          reproduce: Reproduce,</div><div class="line">        &#125;&#125;/&gt;</div><div class="line">      &lt;/Route&gt;</div><div class="line">      &lt;Route path="article/:id" component=&#123;Article&#125;/&gt;</div><div class="line">      &lt;Route path="about" component=&#123;About&#125;/&gt;</div><div class="line">    &lt;/Route&gt;</div><div class="line">  &lt;/Router&gt;</div><div class="line">), document.getElementById('example'));</div></pre></td></tr></table></figure>
+<p>如果你以前并没有接触过 react-router，相反只是用过刚才提到的 Backbone 的路由或者是 director，你一定会对这种声明式的写法感到惊讶。不过细想这也是情理之中，毕竟是只服务与 React 类库，引入它的特性也是无可厚非。仔细看一下，你会发现：</p>
+<ul>
+<li>Router 与 Route 一样都是 react 组件，它的 history 对象是整个路由系统的核心，它暴露了很多属性和方法在路由系统中使用；</li>
+<li>Route 的 path 属性表示路由组件所对应的路径，可以是绝对或相对路径，相对路径可继承；</li>
+<li>Redirect 是一个重定向组件，有 from 和 to 两个属性；</li>
+<li>Route 的 onEnter 钩子将用于在渲染对象的组件前做拦截操作，比如验证权限；</li>
+<li>在 Route 中，可以使用 component 指定单个组件，或者通过 components 指定多个组件集合；</li>
+<li>param 通过 /:param 的方式传递，这种写法与 express 以及 ruby on rails 保持一致，符合 RestFul 规范；<br>下面再看一下如果使用 director 来声明这个路由系统会是怎样一番景象呢：</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</div><div class="line"><span class="keyword">import</span> &#123; render &#125; <span class="keyword">from</span> <span class="string">'react-dom'</span>;</div><div class="line"><span class="keyword">import</span> &#123; Router &#125; <span class="keyword">from</span> <span class="string">'director'</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> App = React.createClass(&#123;</div><div class="line">  getInitialState() &#123;</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">      <span class="attr">app</span>: <span class="literal">null</span></div><div class="line">    &#125; </div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  componentDidMount() &#123;</div><div class="line">    <span class="keyword">const</span> router = Router(&#123;</div><div class="line">      <span class="string">'/signIn'</span>: &#123;</div><div class="line">        on() &#123;</div><div class="line">          <span class="keyword">this</span>.setState(&#123; <span class="attr">app</span>: (<span class="xml"><span class="tag">&lt;<span class="name">BlogApp</span>&gt;</span><span class="tag">&lt;<span class="name">SignIn</span>/&gt;</span><span class="tag">&lt;/<span class="name">BlogApp</span>&gt;</span></span>) &#125;)</div><div class="line">        &#125;,</div><div class="line">      &#125;,</div><div class="line">      <span class="string">'/signOut'</span>: &#123;</div><div class="line">        结构与 signIn 类似</div><div class="line">      &#125;,</div><div class="line">      <span class="string">'/archives'</span>: &#123;</div><div class="line">        <span class="string">'/posts'</span>: &#123;</div><div class="line">          on() &#123;</div><div class="line">            <span class="keyword">this</span>.setState(&#123; <span class="attr">app</span>: (&lt;BlogApp&gt;&lt;Archives original=&#123;Original&#125; reproduct=&#123;Reproduct&#125;/&gt;&lt;/BlogApp&gt;) &#125;)</div><div class="line">          &#125;,</div><div class="line">        &#125;,</div><div class="line">      &#125;,</div><div class="line">      '/article': &#123;</div><div class="line">        '/:id': &#123;</div><div class="line">          on (id) &#123;</div><div class="line">            this.setState(&#123; app: (&lt;BlogApp&gt;&lt;Article id=&#123;id&#125;/&gt;&lt;/BlogApp&gt;) &#125;)</div><div class="line">          &#125;,</div><div class="line">        &#125;,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    return &lt;div&gt;&#123;React.cloneElement(this.state.app)&#125;&lt;/div&gt;;</div><div class="line">  &#125;,</div><div class="line">&#125;)</div><div class="line">render(&lt;App/&gt;, document.getElementById('example'));</div></pre></td></tr></table></figure>
+<p>从代码的优雅程度、可读性以及维护性上看绝对 react-router 在这里更胜一筹。分析上面的代码，每个路由的渲染逻辑都相对独立的，这样就需要写很多重复的代码，这里虽然可以借助 React 的 setState 来统一管理路由返回的组件，将 render 方法做一定的封装，但结果却是要多维护一个 state，在 react-router 中这一步根本不需要。此外，这种命令式的写法与 React 代码放在一起也是略显突兀。而 react-router 中的声明式写法在组件继承上确实很清晰易懂，而且更加符合 React 的风格。包括这里的默认路由、重定向等等都使用了这种声明式。相信读到这里你已经放弃了在 React 中使用 react-router 外的路由系统！</p>
+<p>接下来，还是回到 react-router 示例中，看一下路由组件内部的代码：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> SignIn = React.createClass(&#123;</div><div class="line">  handleSubmit(e) &#123;</div><div class="line">    e.preventDefault();</div><div class="line">    <span class="keyword">const</span> email = findDOMNode(<span class="keyword">this</span>.refs.name).value;</div><div class="line">    <span class="keyword">const</span> pass = findDOMNode(<span class="keyword">this</span>.refs.pass).value;</div><div class="line">    <span class="comment">// 此处通过修改 localStorage 模拟了登录效果</span></div><div class="line">    <span class="keyword">if</span> (pass !== <span class="string">'password'</span>) &#123;</div><div class="line">      <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">    localStorage.setItem(<span class="string">'login'</span>, <span class="string">'true'</span>);</div><div class="line">    <span class="keyword">const</span> location = <span class="keyword">this</span>.props.location;</div><div class="line">    <span class="keyword">if</span> (location.state &amp;&amp; location.state.nextPathname) &#123;</div><div class="line">      <span class="keyword">this</span>.props.history.replaceState(<span class="literal">null</span>, location.state.nextPathname);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="comment">// 这里使用 replaceState 方法做了跳转，但在浏览器历史中不会多一条记录，因为是替换了当前的记录</span></div><div class="line">      <span class="keyword">this</span>.props.history.replaceState(<span class="literal">null</span>, <span class="string">'/about'</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    <span class="keyword">if</span> (hasLogin()) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span>你已经登录系统！<span class="tag">&lt;<span class="name">Link</span> <span class="attr">to</span>=<span class="string">"/signOut"</span>&gt;</span>点此退出<span class="tag">&lt;/<span class="name">Link</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      &lt;form onSubmit=&#123;this.handleSubmit&#125;&gt;</div><div class="line">        &lt;label&gt;&lt;input ref="name"/&gt;&lt;/label&gt;&lt;br/&gt;</div><div class="line">        &lt;label&gt;&lt;input ref="pass"/&gt;&lt;/label&gt; (password)&lt;br/&gt;</div><div class="line">        &lt;button type="submit"&gt;登录&lt;/button&gt;</div><div class="line">      &lt;/form&gt;</div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">const SignOut = React.createClass(&#123;</div><div class="line">  componentDidMount() &#123;</div><div class="line">    localStorage.setItem('login', 'false');</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  render() &#123;</div><div class="line">    return &lt;p&gt;已经退出！&lt;/p&gt;;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>上面的代码表示了博客系统的登录以及退出功能。登录成功，默认跳转到 /about 路径下，如果在 state 对象中存储了 nextPathname，则跳转到该路径下。在这里需要指出每一个路由（Route）中声明的组件（比如 SignIn）在渲染之前都会被传入一些 props，具体是在源码中的 RoutingContext.js 中完成，主要包括：</p>
+<ul>
+<li>history 对象，它提供了很多有用的方法可以在路由系统中使用，比如刚刚用到的history.replaceState，用于替换当前的 URL，并且会将被替换的 URL 在浏览器历史中删除。函数的第一个参数是 state 对象，第二个是路径；</li>
+<li>location 对象，它可以简单的认为是 URL 的对象形式表示，这里要提的是 location.state，这里 state 的含义与 HTML5 history.pushState API 中的 state 对象一样。每个 URL 都会对应一个 state 对象，你可以在对象里存储数据，但这个数据却不会出现在 URL 中。实际上，数据被存在了 sessionStorage 中；</li>
+</ul>
+<p>事实上，刚才提到的两个对象同时存在于路由组件的 context 中，你还可以通过 React 的 context API 在组件的子级组件中获取到这两个对象。比如在 SignIn 组件的内部又包含了一个 SignInChild 组件，你就可以在组件内部通过 this.context.history 获取到 history 对象，进而调用它的 API 进行跳转等操作。</p>
+<p>接下来，我们一起看一下 Archives 组件内部的代码：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> Archives = React.createClass(&#123;</div><div class="line">  render() &#123;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></div><div class="line">        原创：<span class="tag">&lt;<span class="name">br</span>/&gt;</span> &#123;this.props.original&#125;</div><div class="line">        转载：<span class="tag">&lt;<span class="name">br</span>/&gt;</span> &#123;this.props.reproduce&#125;</div><div class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">const</span> Original = React.createClass(&#123;</div><div class="line">  render() &#123;</div><div class="line">    <span class="keyword">return</span> (</div><div class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"archives"</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">ul</span>&gt;</span></div><div class="line">          &#123;blogData.slice(0, 4).map((item, index) =&gt; &#123;</div><div class="line">            return (</div><div class="line">              <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">&#123;index&#125;</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">Link</span> <span class="attr">to</span>=<span class="string">&#123;</span>`/<span class="attr">article</span>/$&#123;<span class="attr">index</span>&#125;`&#125; <span class="attr">query</span>=<span class="string">&#123;&#123;type:</span> '<span class="attr">Original</span>'&#125;&#125; <span class="attr">state</span>=<span class="string">&#123;&#123;title:</span> <span class="attr">item.title</span>&#125;&#125;&gt;</span></div><div class="line">                  &#123;item.title&#125;</div><div class="line">                <span class="tag">&lt;/<span class="name">Link</span>&gt;</span></div><div class="line">              <span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">            )</div><div class="line">          &#125;)&#125;</div><div class="line">        <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    );</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">const</span> Reproduce = React.createClass(&#123;</div><div class="line">  <span class="comment">// 与 Original 类似</span></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>上述代码展示了文章归档以及原创和转载列表。现在回顾一下路由声明部分的代码：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&lt;Redirect <span class="keyword">from</span>=<span class="string">"/archives"</span> to=<span class="string">"/archives/posts"</span>/&gt;</div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">Route</span> <span class="attr">onEnter</span>=<span class="string">&#123;requireAuth&#125;</span> <span class="attr">path</span>=<span class="string">"archives"</span> <span class="attr">component</span>=<span class="string">&#123;Archives&#125;</span>&gt;</span></span></div><div class="line">  <span class="tag">&lt;<span class="name">Route</span> <span class="attr">path</span>=<span class="string">"posts"</span> <span class="attr">components</span>=<span class="string">&#123;&#123;</span></span></div><div class="line">    <span class="attr">original:</span> <span class="attr">Original</span>,</div><div class="line">    <span class="attr">reproduce:</span> <span class="attr">Reproduce</span>,</div><div class="line">  &#125;&#125;/&gt;</div><div class="line"><span class="tag">&lt;/<span class="name">Route</span>&gt;</span></div><div class="line"></div><div class="line">function requireAuth(nextState, replaceState) &#123;</div><div class="line">  if (!hasLogin()) &#123;</div><div class="line">    replaceState(&#123; nextPathname: nextState.location.pathname &#125;, '/signIn');</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述的代码中有三点值得注意：</p>
+<ul>
+<li>用到了一个 Redirect 组件，将 /archives 重定向到 /archives/posts 下；</li>
+<li>onEnter 钩子中用于判断用户是否登录，如果未登录则使用 replaceState 方法重定向，该方法的作用与 <redirect> 组件类似，不会在浏览器中留下重定向前的历史；</redirect></li>
+<li>如果使用 components 声明路由所对应的多个组件，在组件内部可以通过 this.props.original（本例中）来获取组件；</li>
+</ul>
+<p>到这里，我们的博客路由系统基本已经讲完了，希望你能够对 react-router 最基本的 API 及其内部的基本原理有一定的了解。再总结一下 react-router 作为 React 路由系统的特点和优势所在：</p>
+<ul>
+<li>结合 JSX 采用声明式的语法，很优雅的实现了路由嵌套以及路由回调组件的声明，包括重定向组件，默认路由等，这归功于其内部的匹配算法，可以通过 URL（准确的说应该是 location 对象） 在组件树中准确匹配出需要渲染的组件。这一点绝对完胜 director 等路由在 React 中的表现；</li>
+<li>不需要单独维护 state 表示当前路由，这一点也是使用 director 等路由免不了要做的；</li>
+<li>除了路由组件外，还可以通过 history 对象中的 pushState 或 replaceState方法进行路由和重定向，比如在 flux 的 store 中想要做一个跳转操作就可以通过该方法完成；</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 近似于 &lt;Link to=&#123;path&#125; state=&#123;null&#125;/&gt;</span></div><div class="line">history.pushState(<span class="literal">null</span>, path);</div><div class="line"></div><div class="line"><span class="comment">// 近似于 &lt;Redirect from=&#123;currentPath&#125; to=&#123;nextPath&#125;/&gt;</span></div><div class="line">history.replaceState(<span class="literal">null</span>, nextPath);</div></pre></td></tr></table></figure>
+<p>当然还有一些其他的特性没有在这里介绍，比如在大型应用中按需载入路由组件、服务端渲染以及整合 redux/relay 框架，这些都是用其他路由系统很难完成的。接下来的部分主要来讲解示例背后的基本原理。</p>
+<h1 id="二、原理分析"><a href="#二、原理分析" class="headerlink" title="二、原理分析"></a>二、原理分析</h1><p>在这一部分主要会讲解路由的基本原理，react-router 的状态机特性，在用户点击了 Link 组件后路由系统中到底发生了哪些，前端路由如何处理浏览器的前进和后退功能。</p>
+<h2 id="2-1-路由的基本原理"><a href="#2-1-路由的基本原理" class="headerlink" title="2.1 路由的基本原理"></a>2.1 路由的基本原理</h2><p>无论是传统的后端 MVC 主导的应用，还是在当下最流行的单页面应用中，路由的职责都很重要，但原理并不复杂，即保证视图和 URL 的同步，而视图可以看成是资源的一种表现。当用户在页面中进行操作时，应用会在若干个交互状态中切换，路由则可以记录下某些重要的状态，比如在一个博客系统中用户是否登录、在访问哪一篇文章、位于文章归档列表的第几页。而这些变化同样会被记录在浏览器的历史中，用户可以通过浏览器的前进、后退按钮切换状态，同样可以将 URL 分享给好友。简而言之，用户可以通过手动输入或者与页面进行交互来改变 URL，然后通过同步或者异步的方式向服务端发送请求获取资源（当然，资源也可能存在于本地），成功后重新绘制 UI，原理如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/1.png" alt="效果图"></p>
+<h2 id="2-2-react-router-的状态机特性"><a href="#2-2-react-router-的状态机特性" class="headerlink" title="2.2 react-router 的状态机特性"></a>2.2 react-router 的状态机特性</h2><p>我们看到 react-router 中的很多特性都与 React 保持了一致，比如它的声明式组件、组件嵌套，当然也包括 React 的状态机特性，因为毕竟它就是基于 React 构建并且为之所用的。回想一下在 React 中，我们把组件比作是一个函数，state/props 作为函数的参数，当它们发生变化时会触发函数执行，进而帮助我们重新绘制 UI。那么在 react-router 中将会是什么样子呢？在 react-router 中，我们可以把 Router 组件看成是一个函数，Location 作为参数，返回的结果同样是 UI，二者的对比如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/2.png" alt="效果图"></p>
+<p>上图说明了只要 URL 一致，那么返回的 UI 界面总是相同的。或许你还很好奇在这个简单的状态机后面究竟是什么样子呢？在点击 Link 后路由系统发生了什么？在点击浏览器的前进和后退按钮后路由系统又做了哪些？那么请看下图：</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/3.png" alt="效果图"></p>
+<p>接下来的两部分会对上图做详细的讲解。</p>
+<h2 id="2-3-点击-Link-后路由系统发生了什么？"><a href="#2-3-点击-Link-后路由系统发生了什么？" class="headerlink" title="2.3 点击 Link 后路由系统发生了什么？"></a>2.3 点击 Link 后路由系统发生了什么？</h2><p>Link 组件最终会渲染为 HTML 标签 <a>，它的 to、query、hash 属性会被组合在一起并渲染为 href 属性。虽然 Link 被渲染为超链接，但在内部实现上使用脚本拦截了浏览器的默认行为，然后调用了history.pushState 方法（注意，文中出现的 history 指的是通过 history 包里面的 create*History 方法创建的对象，window.history 则指定浏览器原生的 history 对象，由于有些 API 相同，不要弄混）。history 包中底层的 pushState 方法支持传入两个参数 state 和 path，在函数体内有将这两个参数传输到 createLocation 方法中，返回 location 的结构如下：</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">location = &#123;</div><div class="line">  pathname, <span class="comment">// 当前路径，即 Link 中的 to 属性</span></div><div class="line">  search, <span class="comment">// search</span></div><div class="line">  hash, <span class="comment">// hash</span></div><div class="line">  state, <span class="comment">// state 对象</span></div><div class="line">  action, <span class="comment">// location 类型，在点击 Link 时为 PUSH，浏览器前进后退时为 POP，调用 replaceState 方法时为 REPLACE</span></div><div class="line">  key, <span class="comment">// 用于操作 sessionStorage 存取 state 对象</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>系统会将上述 location 对象作为参数传入到 TransitionTo 方法中，然后调用 window.location.hash 或者window.history.pushState() 修改了应用的 URL，这取决于你创建 history 对象的方式。同时会触发history.listen 中注册的事件监听器。</p>
+<p>接下来请看路由系统内部是如何修改 UI 的。在得到了新的 location 对象后，系统内部的 matchRoutes 方法会匹配出 Route 组件树中与当前 location 对象匹配的一个子集，并且得到了 nextState，具体的匹配算法不在这里讲解，感兴趣的同学可以<a href="https://github.com/ReactTraining/react-router/blob/master/modules/matchRoutes.js" target="_blank" rel="external">点击查看</a>，state 的结构如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">nextState = &#123;</div><div class="line">  location, <span class="comment">// 当前的 location 对象</span></div><div class="line">  routes, <span class="comment">// 与 location 对象匹配的 Route 树的子集，是一个数组</span></div><div class="line">  params, <span class="comment">// 传入的 param，即 URL 中的参数</span></div><div class="line">  components, <span class="comment">// routes 中每个元素对应的组件，同样是数组</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>在 Router 组件的 componentWillMount 生命周期方法中调用了 history.listen(listener) 方法。listener 会在上述 matchRoutes 方法执行成功后执行 listener(nextState)，nextState 对象每个属性的具体含义已经在上述代码中注释，接下来执行 this.setState(nextState) 就可以实现重新渲染 Router 组件。举个简单的例子，当 URL（准确的说应该是 location.pathname） 为 /archives/posts 时，应用的匹配结果如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-route/4.png" alt="效果图"></p>
+<p>对应的渲染结果如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;BlogApp&gt;</div><div class="line">  <span class="xml"><span class="tag">&lt;<span class="name">Archives</span> <span class="attr">original</span>=<span class="string">&#123;Original&#125;</span> <span class="attr">reproduce</span>=<span class="string">&#123;Reproduce&#125;/</span>&gt;</span></span></div><div class="line"><span class="tag">&lt;/<span class="name">BlogApp</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>到这里，系统已经完成了当用户点击一个由 Link 组件渲染出的超链接到页面刷新的全过程。</p>
+<h2 id="2-4-点击浏览器的前进和后退按钮发生了什么？"><a href="#2-4-点击浏览器的前进和后退按钮发生了什么？" class="headerlink" title="2.4 点击浏览器的前进和后退按钮发生了什么？"></a>2.4 点击浏览器的前进和后退按钮发生了什么？</h2><p>可以简单地把 web 浏览器的历史记录比做成一个仅有入栈操作的栈，当用户浏览器到某一个页面时将该文档存入到栈中，点击「后退」或「前进」按钮时移动指针到 history 栈中对应的某一个文档。在传统的浏览器中，文档都是从服务端请求过来的。不过现代的浏览器一般都会支持两种方式用于动态的生成并载入页面。</p>
+<h2 id="2-5-location-hash-与-hashchange-事件"><a href="#2-5-location-hash-与-hashchange-事件" class="headerlink" title="2.5 location.hash 与 hashchange 事件"></a>2.5 location.hash 与 hashchange 事件</h2><p>这也是比较简单并且兼容性也比较好的一种方式，详细请看下面几点：</p>
+<ul>
+<li>使用 hashchange 事件来监听 window.location.hash 的变化</li>
+<li>hash 发生变化浏览器会更新 URL，并且在 history 栈中产生一条记录</li>
+<li>路由系统会将所有的路由信息都保存到 location.hash 中</li>
+<li>在 react-router 内部注册了 window.addEventListener(‘hashchange’, listener, false) 事件监听器</li>
+<li>listener 内部可以通过 hash fragment 获取到当前 URL 对应的 location 对象</li>
+<li>接下来的过程与点击 <link> 时保持一致</li>
+</ul>
+<p>当然，你会想到不仅仅在前进和后退会触发 hashchange 事件，应该说每次路由操作都会有 hash 的变化。确实如此，为了解决这个问题，路由系统内部通过判断 currentLocation 与 nextLocation 是否相等来处理该问题。不过，从它的实现原理上来看，由于路由操作 hash 发生变化而重复调用 transitonTo(location) 这一步确实无可避免，这也是我在上图中所画的虚线的含义。</p>
+<p>这种方法会在浏览器的 URL 中添加一个 # 号，不过出于兼容性的考虑（ie8+），路由系统内部将这种方式（对应 history 包中的 createHashHistory 方法）作为创建 history 对象的默认方法。</p>
+<h2 id="2-5-history-pushState-与-popstate-事件"><a href="#2-5-history-pushState-与-popstate-事件" class="headerlink" title="2.5 history.pushState 与 popstate 事件"></a>2.5 history.pushState 与 popstate 事件</h2><p>新的 HTML5 规范中还提出了一个相对复杂但更加健壮的方式来解决该问题，请看下面几点：</p>
+<ul>
+<li>上文中提到了可以通过 window.history.pushState(state, title, path) 方法（更多关于 history 对象的详细 API 可以查看这里）来改变浏览器的 URL，实际上该方法同时在 history 栈中存入了 state 对象。</li>
+<li>在浏览器前进和后退时触发 popstate 事件，然后注册 window.addEventListener(‘popstate’, listener, false) ，并且可以在事件对象中取出对应的 state 对象</li>
+<li>state 对象可以存储一些恢复该页面所需要的简单信息，上文中已经提到 state 会作为属性存储在 location 对象中，这样你就可以在组件中通过 location.state 来获取到</li>
+<li>在 react-router 内部将该对象存储到了 sessionStorage 中，也就是上图中的 saveState 操作</li>
+<li>接下来的操作与第一种方式一致</li>
+</ul>
+<p>使用这种方式（对应 history 包中的 createHistory 方法）进行路由需要服务端要做一个路由的配置将所有请求重定向到入口文件位置，你可以参考这个示例，否则在用户刷新页面时会报 404 错误。</p>
+<p>实际上，上面提到的 state 对象不仅仅在第二种路由方式中可以使用。react-router 内部做了 polyfill，统一了 API。在使用第一种方式创建路由时你会发现 URL 中多了一个类似 _key=s1gvrm 的 query，这个 _key就是为 react-router 内部在 sessionStorage 中读取 state 对象所提供的。</p>
+<p>本文引用自 <a href="https://zhuanlan.zhihu.com/p/20381597" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/20381597</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react-react-router/" rel="tag"># --react  react-router</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/22/react-context/" rel="next" title="对 React Context 的理解以及应用">
+                <i class="fa fa-chevron-left"></i> 对 React Context 的理解以及应用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、一个简单的示例"><span class="nav-text">一、一个简单的示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、原理分析"><span class="nav-text">二、原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-路由的基本原理"><span class="nav-text">2.1 路由的基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-react-router-的状态机特性"><span class="nav-text">2.2 react-router 的状态机特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-点击-Link-后路由系统发生了什么？"><span class="nav-text">2.3 点击 Link 后路由系统发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-点击浏览器的前进和后退按钮发生了什么？"><span class="nav-text">2.4 点击浏览器的前进和后退按钮发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-location-hash-与-hashchange-事件"><span class="nav-text">2.5 location.hash 与 hashchange 事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-history-pushState-与-popstate-事件"><span class="nav-text">2.5 history.pushState 与 popstate 事件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2019/02/23/react-router/';
+          this.page.identifier = '2019/02/23/react-router/';
+          this.page.title = '深入理解 react-router 路由系统';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
