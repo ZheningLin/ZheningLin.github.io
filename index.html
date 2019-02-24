@@ -412,38 +412,16 @@
 
       
         
-          
-            <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-pureComponent/bg.gif" alt="效果图"></p>
+          <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-pureComponent/bg.gif" alt="效果图"></p>
 <h1 id="一、介绍PureComponent"><a href="#一、介绍PureComponent" class="headerlink" title="一、介绍PureComponent"></a>一、介绍PureComponent</h1><p>React 15.3在2016.06.29发布了，这个版本最值得关注的是支持了React.PureComponent，它取代了之前的pure-render-mixin。在本文中，我们将讨论PureComponent的重要性和使用场景。</p>
-<p>React.PureComponent最重要的一个用处就是优化React应用，这很容易快速地实现。使用React.PureComponent对性能的提升是非常可观的，因为它减少了应用中的渲染次数。</p>
-<p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-pureComponent/bg.gif" alt="效果图"></p>
-<p>PureComponent改变了生命周期方法shouldComponentUpdate，并且它会自动检查组件是否需要重新渲染。这时，只有PureComponent检测到state或者props发生变化时，PureComponent才会调用render方法，因此，你不用手动写额外的检查，就可以在很多组件中改变state， 例如：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="keyword">this</span>.state.someVal !== computedVal) &#123;</div><div class="line">  <span class="keyword">this</span>.setState(&#123; <span class="attr">someVal</span>: computedVal &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>根据React源码，如果组件是纯组件(Pure Component)，那么一下比较是很容易理解的：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="keyword">this</span>._compositeType === CompositeTypes.PureClass) &#123;</div><div class="line">  shouldUpdate = !shallowEqual(prevProps, nextProps) || ! shallowEqual(inst.state, nextState);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其中，shadowEqual只会”浅”检查组件的props和state，这就意味着嵌套对象和数组是不会被比较的。</p>
-<p>深比较操作是非常昂贵的，同时，如果这个组件还是纯组件(PureComponent)，那么深比较将会更浪费。另外，你也可以使用shouldComponentUpdate来手动确定组件是否需要重新渲染。最简单的方式就是直接比较props或state:</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">shouldComponentUpdate(nextProps, nextState) &#123;</div><div class="line">  <span class="keyword">return</span> nextProps.user.id === props.user.id;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>除此之外，你可以使用immutable属性。这种情况下，属性的比较是非常容易的，因为已存在的对象不会发生改变，取而代之的是重新创建新的对象。其中，Immutable.js就是非常好的Immutable库。</p>
-<h1 id="二、使用PureComponent"><a href="#二、使用PureComponent" class="headerlink" title="二、使用PureComponent"></a>二、使用PureComponent</h1><p>PureComponent节约了我们的时间，避免了多余的代码。那么，掌握如何正确使用它是非常重要的，否则如果使用不当，它就无法发挥作用。因为PureComponent仅仅是浅比较(shadow comparison)，所以改变组件内部的props或者state，它将不会发挥作用。例如，让我们想想这样一种情况，父组件有一个render方法和一个click处理方法：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">handleClick() &#123;</div><div class="line">  <span class="keyword">let</span> &#123;items&#125; = <span class="keyword">this</span>.state</div><div class="line"></div><div class="line">  items.push(<span class="string">'new-item'</span>)</div><div class="line">  <span class="keyword">this</span>.setState(&#123; items &#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">render() &#123;</div><div class="line">  <span class="keyword">return</span> (</div><div class="line">    &lt;div&gt;</div><div class="line">      &lt;button onClick=&#123;this.handleClick&#125; /&gt;</div><div class="line">      &lt;ItemList items=&#123;this.state.items&#125; /&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">  )</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果ItemList是纯组件(PureComponent)，那么这时它是不会被渲染的，因为尽管this.state.items的值发生了改变，但是它仍然指向同一个对象的引用。但是，通过移除可变对象就很容易改变这种情况，使之能够正确被渲染。</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">handleClick() &#123;</div><div class="line">  <span class="keyword">this</span>.setState(<span class="function"><span class="params">prevState</span> =&gt;</span> (&#123;</div><div class="line">    <span class="attr">words</span>: prevState.items.concat([<span class="string">'new-item'</span>])</div><div class="line">  &#125;));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果一个纯组件(PureComponent)的state或props引用了一个新对象，那么这个组件就会被重新渲染(re-render)。这暗示着，如果不想损失PureComponent的优点，那么我们应该避免以下的结构：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;Entity values=&#123;<span class="keyword">this</span>.props.values || []&#125;/&gt;</div></pre></td></tr></table></figure>
-<p>如上面代码，新数组，即便是空数组，总是会迫使组件重新渲染。为了避免这个问题，你可以使用defaultProps，它包含了一个属性的初始化空状态。解决这个问题的另一种方法如下：</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;CustomInput onChange=&#123;e =&gt; <span class="keyword">this</span>.props.update(e.target.value)&#125; /&gt;</div></pre></td></tr></table></figure>
-<p>在纯组件(PureComponent)被创建时，因为函数的新对象被创建了，所以它会获得新数据，并且重新渲染。解决这个问题最简单的方法就是: 在组件的constructor方法中使用bind。</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constructor</span>(props) &#123;</div><div class="line">    <span class="keyword">super</span>(props)</div><div class="line">    <span class="keyword">this</span>.update = <span class="keyword">this</span>.update.bind(<span class="keyword">this</span>)</div><div class="line">&#125;</div><div class="line">update(e) &#123;</div><div class="line">    <span class="keyword">this</span>.props.update(e.target.value)</div><div class="line">&#125;</div><div class="line">render() &#123;</div><div class="line">    <span class="keyword">return</span> &lt;MyInput onChange=&#123;this.update&#125; /&gt;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>同时，在JSX中，任何包含子元素(child elements)的组件，shallowEqual检查总会返回false。</p>
-<p>请谨记：纯组件忽略重新渲染时，不仅会影响它本身，而且会影响它的说有子元素，所以，使用PureComponent的最佳情况就是展示组件，它既没有子组件，也没有依赖应用的全局状态。</p>
-<h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><p>事实上，如果你已经意识到shallowEqual和JS References的特性，过渡到PureComponent是相当容易的。正常情况下，迁移的方式非常简单，就像改变组件继承的基类，从<br><figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;...&#125;</div></pre></td></tr></table></figure></p>
-<p>到<br><figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>&#123;...&#125;</div></pre></td></tr></table></figure></p>
-<p>这样不仅能平滑过渡，甚至可以提升性能。所以，我极力推荐所有人在开发应用中使用PureComponent。</p>
-<h1 id="四、注意"><a href="#四、注意" class="headerlink" title="四、注意"></a>四、注意</h1><p>在纯组件有子组件的时候，所有基于this.context改变的子组件，在this.context改变时， 将不会重新渲染，除非在父组件(Parent ParentComponent)中声明contextTypes。</p>
-<p>本文翻译自 <a href="https://60devs.com/pure-component-in-react.html" target="_blank" rel="external">https://60devs.com/pure-component-in-react.html</a></p>
-
-          
+<p>React.PureComponent最重要的一个用处就是优化React应用，这很容易快速地实现。使用React.PureComponent对性能的提升是非常可观的，因为它减少了应用中的渲染次数。<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/02/24/react-pureComponent/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
