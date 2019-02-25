@@ -99,7 +99,7 @@
 <meta property="og:description" content="一、介绍PureComponentReact 15.3在2016.06.29发布了，这个版本最值得关注的是支持了React.PureComponent，它取代了之前的pure-render-mixin。在本文中，我们将讨论PureComponent的重要性和使用场景。 React.PureComponent最重要的一个用处就是优化React应用，这很容易快速地实现。使用React.PureCom">
 <meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-pureComponent/bg.gif">
 <meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-pureComponent/bg.gif">
-<meta property="og:updated_time" content="2019-02-24T16:16:55.626Z">
+<meta property="og:updated_time" content="2019-02-24T16:18:51.731Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在React.js中使用PureComponent的重要性和使用方式">
 <meta name="twitter:description" content="一、介绍PureComponentReact 15.3在2016.06.29发布了，这个版本最值得关注的是支持了React.PureComponent，它取代了之前的pure-render-mixin。在本文中，我们将讨论PureComponent的重要性和使用场景。 React.PureComponent最重要的一个用处就是优化React应用，这很容易快速地实现。使用React.PureCom">
@@ -432,7 +432,7 @@
 <p>如上面代码，新数组，即便是空数组，总是会迫使组件重新渲染。为了避免这个问题，你可以使用defaultProps，它包含了一个属性的初始化空状态。解决这个问题的另一种方法如下：</p>
 <figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;CustomInput onChange=&#123;e =&gt; <span class="keyword">this</span>.props.update(e.target.value)&#125; /&gt;</div></pre></td></tr></table></figure>
 <p>在纯组件(PureComponent)被创建时，因为函数的新对象被创建了，所以它会获得新数据，并且重新渲染。解决这个问题最简单的方法就是: 在组件的constructor方法中使用bind。</p>
-<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constructor</span>(props) &#123;</div><div class="line">    <span class="keyword">super</span>(props)</div><div class="line">    <span class="keyword">this</span>.update = <span class="keyword">this</span>.update.bind(<span class="keyword">this</span>)</div><div class="line">&#125;</div><div class="line">update(e) &#123;</div><div class="line">    <span class="keyword">this</span>.props.update(e.target.value)</div><div class="line">&#125;</div><div class="line">render() &#123;</div><div class="line">    <span class="keyword">return</span> &lt;MyInput onChange=&#123;this.update&#125; /&gt;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constructor</span>(props) &#123;</div><div class="line">    <span class="keyword">super</span>(props)</div><div class="line">    <span class="keyword">this</span>.update = <span class="keyword">this</span>.update.bind(<span class="keyword">this</span>)</div><div class="line">&#125;</div><div class="line">update(e) &#123;</div><div class="line">    <span class="keyword">this</span>.props.update(e.target.value)</div><div class="line">&#125;</div><div class="line">render() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">MyInput</span> <span class="attr">onChange</span>=<span class="string">&#123;this.update&#125;</span> /&gt;</span></span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>同时，在JSX中，任何包含子元素(child elements)的组件，shallowEqual检查总会返回false。</p>
 <p>请谨记：纯组件忽略重新渲染时，不仅会影响它本身，而且会影响它的说有子元素，所以，使用PureComponent的最佳情况就是展示组件，它既没有子组件，也没有依赖应用的全局状态。</p>
 <h1 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h1><p>事实上，如果你已经意识到shallowEqual和JS References的特性，过渡到PureComponent是相当容易的。正常情况下，迁移的方式非常简单，就像改变组件继承的基类，从<br><figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyComponent</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;...&#125;</div></pre></td></tr></table></figure></p>
@@ -491,6 +491,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/25/client-server-render/" rel="prev" title="精读前后端渲染之争">
+                精读前后端渲染之争 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -592,7 +596,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -614,7 +618,7 @@
             
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
