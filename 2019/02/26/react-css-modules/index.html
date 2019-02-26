@@ -99,7 +99,7 @@
 <meta property="og:description" content="CSS 是前端领域中进化最慢的一块。由于 ES2015/2016 的快速普及和 Babel/Webpack 等工具的迅猛发展，CSS 被远远甩在了后面，逐渐成为大型项目工程化的痛点。也变成了前端走向彻底模块化前必须解决的难题。">
 <meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-css-modules/bg.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-css-modules/1.png">
-<meta property="og:updated_time" content="2019-02-26T15:46:43.224Z">
+<meta property="og:updated_time" content="2019-02-26T15:53:45.124Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSS Modules 详解及 React 中实践">
 <meta name="twitter:description" content="CSS 是前端领域中进化最慢的一块。由于 ES2015/2016 的快速普及和 Babel/Webpack 等工具的迅猛发展，CSS 被远远甩在了后面，逐渐成为大型项目工程化的痛点。也变成了前端走向彻底模块化前必须解决的难题。">
@@ -415,24 +415,14 @@
         <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-css-modules/bg.jpg" alt="效果图"></p>
 <p>CSS 是前端领域中进化最慢的一块。由于 ES2015/2016 的快速普及和 Babel/Webpack 等工具的迅猛发展，CSS 被远远甩在了后面，逐渐成为大型项目工程化的痛点。也变成了前端走向彻底模块化前必须解决的难题。<br><a id="more"></a><br>CSS 模块化的解决方案有很多，但主要有两类。一类是彻底抛弃 CSS，使用 JS 或 JSON 来写样式。Radium，jsxstyle，react-style 属于这一类。优点是能给 CSS 提供 JS 同样强大的模块化能力；缺点是不能利用成熟的 CSS 预处理器（或后处理器） Sass/Less/PostCSS，<code>:hover</code> 和 <code>:active</code> 伪类处理起来复杂。另一类是依旧使用 CSS，但使用 JS 来管理样式依赖，代表是 CSS Modules。CSS Modules 能最大化地结合现有 CSS 生态和 JS 模块化能力，API 简洁到几乎零学习成本。发布时依旧编译出单独的 JS 和 CSS。它并不依赖于 React，只要你使用 Webpack，可以在 Vue/Angular/jQuery 中使用。是我认为目前最好的 CSS 模块化解决方案。近期在项目中大量使用，下面具体分享下实践中的细节和想法。</p>
 <h1 id="一、CSS-模块化遇到了哪些问题？"><a href="#一、CSS-模块化遇到了哪些问题？" class="headerlink" title="一、CSS 模块化遇到了哪些问题？"></a>一、CSS 模块化遇到了哪些问题？</h1><p>CSS 模块化重要的是要解决好两个问题：CSS 样式的导入和导出。灵活按需导入以便复用代码；导出时要能够隐藏内部作用域，以免造成全局污染。Sass/Less/PostCSS 等前仆后继试图解决 CSS 编程能力弱的问题，结果它们做的也确实优秀，但这并没有解决模块化最重要的问题。Facebook 工程师 Vjeux 首先抛出了 React 开发中遇到的一系列 CSS 相关问题。加上我个人的看法，总结如下：</p>
-<ol>
-<li><p>全局污染<br>CSS 使用全局选择器机制来设置样式，优点是方便重写样式。缺点是所有的样式都是全局生效，样式可能被错误覆盖，因此产生了非常丑陋的 <code>!important</code>，甚至 inline <code>!important</code> 和复杂的<a href="Selectors Level 3">选择器权重计数表</a>，提高犯错概率和使用成本。Web Components 标准中的 Shadow DOM 能彻底解决这个问题，但它的做法有点极端，样式彻底局部化，造成外部无法重写样式，损失了灵活性。</p>
-</li>
-<li><p>命名混乱</p>
-</li>
-</ol>
+<p>1.全局污染<br>CSS 使用全局选择器机制来设置样式，优点是方便重写样式。缺点是所有的样式都是全局生效，样式可能被错误覆盖，因此产生了非常丑陋的 <code>!important</code>，甚至 inline <code>!important</code> 和复杂的<a href="Selectors Level 3">选择器权重计数表</a>，提高犯错概率和使用成本。Web Components 标准中的 Shadow DOM 能彻底解决这个问题，但它的做法有点极端，样式彻底局部化，造成外部无法重写样式，损失了灵活性。</p>
+<p>2.命名混乱</p>
 <p>由于全局污染的问题，多人协同开发时为了避免样式冲突，选择器越来越复杂，容易形成不同的命名风格，很难统一。样式变多后，命名将更加混乱。</p>
-<ol>
-<li>依赖管理不彻底</li>
-</ol>
+<p>3.依赖管理不彻底</p>
 <p>组件应该相互独立，引入一个组件时，应该只引入它所需要的 CSS 样式。但现在的做法是除了要引入 JS，还要再引入它的 CSS，而且 Saas/Less 很难实现对每个组件都编译出单独的 CSS，引入所有模块的 CSS 又造成浪费。JS 的模块化已经非常成熟，如果能让 JS 来管理 CSS 依赖是很好的解决办法。Webpack 的 <code>css-loader</code> 提供了这种能力。</p>
-<ol>
-<li>无法共享变量</li>
-</ol>
+<p>4.无法共享变量</p>
 <p>复杂组件要使用 JS 和 CSS 来共同处理样式，就会造成有些变量在 JS 和 CSS 中冗余，Sass/PostCSS/CSS 等都不提供跨 JS 和 CSS 共享变量这种能力。</p>
-<ol>
-<li>代码压缩不彻底</li>
-</ol>
+<p>5.代码压缩不彻底</p>
 <p>由于移动端网络的不确定性，现在对 CSS 压缩已经到了变态的程度。很多压缩工具为了节省一个字节会把 ‘16px’ 转成 ‘1pc’。但对非常长的 class 名却无能为力，力没有用到刀刃上。</p>
 <p>上面的问题如果只凭 CSS 自身是无法解决的，如果是通过 JS 来管理 CSS 就很好解决，因此 Vjuex 给出的解决方案是完全的 CSS in JS，但这相当于完全抛弃 CSS，在 JS 中以 Object 语法来写 CSS，估计刚看到的小伙伴都受惊了。直到出现了 CSS Modules。</p>
 <h1 id="二、CSS-Modules-模块化方案"><a href="#二、CSS-Modules-模块化方案" class="headerlink" title="二、CSS Modules 模块化方案"></a>二、CSS Modules 模块化方案</h1><p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-css-modules/1.png" alt="效果图"></p>
@@ -458,7 +448,7 @@
 </ul>
 <h2 id="2-2-样式默认局部"><a href="#2-2-样式默认局部" class="headerlink" title="2.2 样式默认局部"></a>2.2 样式默认局部</h2><p>使用了 CSS Modules 后，就相当于给每个 class 名外加加了一个 <code>:local</code>，以此来实现样式的局部化，如果你想切换到全局模式，使用对应的 <code>:global</code>。</p>
 <p><code>:local</code> 与 <code>:global</code> 的区别是 CSS Modules 只会对 <code>:local</code> 块的 class 样式做 <code>localIdentName</code> 规则处理，<code>:global</code> 的样式编译后不变。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">.normal &#123;</div><div class="line">  color: green;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/* 以上与下面等价 */</div><div class="line">:local(.normal) &#123;</div><div class="line">  color: green; </div><div class="line">&#125;</div><div class="line"></div><div class="line">/* 定义全局样式 */</div><div class="line">:global(.btn) &#123;</div><div class="line">  color: red;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/* 定义多个全局样式 */</div><div class="line">:global &#123;</div><div class="line">  .link &#123;</div><div class="line">    color: green;</div><div class="line">  &#125;</div><div class="line">  .box &#123;</div><div class="line">    color: yellow;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.normal</span> &#123;</div><div class="line">  <span class="attribute">color</span>: green;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/* 以上与下面等价 */</span></div><div class="line">:local(.normal) &#123;</div><div class="line">  color: green; </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/* 定义全局样式 */</span></div><div class="line">:global(.btn) &#123;</div><div class="line">  color: red;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/* 定义多个全局样式 */</span></div><div class="line">:global &#123;</div><div class="line">  .link &#123;</div><div class="line">    color: green;</div><div class="line">  &#125;</div><div class="line">  <span class="selector-class">.box</span> &#123;</div><div class="line">    <span class="attribute">color</span>: yellow;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="2-3-Compose-来组合样式"><a href="#2-3-Compose-来组合样式" class="headerlink" title="2.3 Compose 来组合样式"></a>2.3 Compose 来组合样式</h2><p>对于样式复用，CSS Modules 只提供了唯一的方式来处理：<code>composes</code> 组合</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* components/Button.css */</span></div><div class="line"><span class="selector-class">.base</span> &#123; <span class="comment">/* 所有通用的样式 */</span> &#125;</div><div class="line"></div><div class="line"><span class="selector-class">.normal</span> &#123;</div><div class="line">  <span class="attribute">composes</span>: base;</div><div class="line">  <span class="comment">/* normal 其它样式 */</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="selector-class">.disabled</span> &#123;</div><div class="line">  <span class="attribute">composes</span>: base;</div><div class="line">  <span class="comment">/* disabled 其它样式 */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> styles <span class="keyword">from</span> <span class="string">'./Button.css'</span>;</div><div class="line"></div><div class="line">buttonElem.outerHTML = <span class="string">`&lt;button class=<span class="subst">$&#123;styles.normal&#125;</span>&gt;Submit&lt;/button&gt;`</span></div></pre></td></tr></table></figure>
@@ -486,18 +476,11 @@
 <h1 id="三、CSS-Modules-使用技巧"><a href="#三、CSS-Modules-使用技巧" class="headerlink" title="三、CSS Modules 使用技巧"></a>三、CSS Modules 使用技巧</h1><p>CSS Modules 是对现有的 CSS 做减法。为了追求<strong>简单可控</strong>，作者建议遵循如下原则：</p>
 <p>不使用选择器，只使用 class 名来定义样式<br>不层叠多个 class，只使用一个 class 把所有样式定义好<br>不嵌套<br>使用 <code>composes</code> 组合来实现复用</p>
 <p>上面两条原则相当于削弱了样式中最灵活的部分，初使用者很难接受。第一条实践起来难度不大，但第二条如果模块状态过多时，class 数量将成倍上升。</p>
-<p>一定要知道，上面之所以称为建议，是因为 CSS Modules 并不强制你一定要这么做。听起来有些矛盾，由于多数 CSS 项目存在深厚的历史遗留问题，过多的限制就意味着增加迁移成本和与外部合作的成本。初期使用中肯定需要一些折衷。幸运的是，CSS Modules 这点做的很好：</p>
-<ol>
-<li>如果我对一个元素使用多个 class 呢？</li>
-</ol>
+<p>一定要知道，上面之所以称为建议，是因为 CSS Modules 并不强制你一定要这么做。听起来有些矛盾，由于多数 CSS 项目存在深厚的历史遗留问题，过多的限制就意味着增加迁移成本和与外部合作的成本。初期使用中肯定需要一些折衷。幸运的是，CSS Modules 这点做的很好：<br>1.如果我对一个元素使用多个 class 呢？</p>
 <p>没问题，样式照样生效。</p>
-<ol>
-<li>如何我在一个 style 文件中使用同名 class 呢？</li>
-</ol>
+<p>2.如何我在一个 style 文件中使用同名 class 呢？</p>
 <p>没问题，这些同名 class 编译后虽然可能是随机码，但仍是同名的。</p>
-<ol>
-<li>如果我在 style 文件中使用了 id 选择器，伪类，标签选择器等呢？</li>
-</ol>
+<p>3.如果我在 style 文件中使用了 id 选择器，伪类，标签选择器等呢？</p>
 <p>没问题，所有这些选择器将不被转换，原封不动的出现在编译后的 css 中。也就是说 CSS Modules 只会转换 class 名相关样式。</p>
 <p>但注意，上面 3 个“如果”尽量不要发生。</p>
 <h1 id="四、CSS-Modules-结合-React-实践"><a href="#四、CSS-Modules-结合-React-实践" class="headerlink" title="四、CSS Modules 结合 React 实践"></a>四、CSS Modules 结合 React 实践</h1><p>在 <code>className</code> 处直接使用 css 中 <code>class</code> 名即可。</p>
@@ -519,6 +502,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">src</div><div class="line">├── app.js</div><div class="line">├── styles</div><div class="line">│   ├── app.scss</div><div class="line">│   └── normalize.scss</div><div class="line">└── views</div><div class="line">    ├── Component.js</div><div class="line">    └── Component.scss</div></pre></td></tr></table></figure>
 <p>这样所有全局的样式都放到 <code>src/styles/app.scss</code> 中引入就可以了。其它所有目录包括 <code>src/views</code> 中的样式都是局部的。</p>
 <h1 id="六、总结"><a href="#六、总结" class="headerlink" title="六、总结"></a>六、总结</h1><p>CSS Modules 很好的解决了 CSS 目前面临的模块化难题。支持与 Sass/Less/PostCSS 等搭配使用，能充分利用现有技术积累。同时也能和全局样式灵活搭配，便于项目中逐步迁移至 CSS Modules。CSS Modules 的实现也属轻量级，未来有标准解决方案后可以低成本迁移。如果你的产品中正好遇到类似问题，非常值得一试。</p>
+<p>本文引用自 <a href="https://zhuanlan.zhihu.com/p/20495964" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/20495964</a></p>
 
       
     </div>
