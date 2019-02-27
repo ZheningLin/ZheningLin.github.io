@@ -1,0 +1,1074 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="--react  redux  server  render," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="React的前端单页应用对SEO并不友好，并且由于首屏渲染依赖于ajax所以在JS禁用状态下基本也就废了，所以我们需要利用服务端渲染（Server side rendering）来对首屏进行优化。虽然React官方提供服务端渲染的API，React-router也支持，但在渲染依赖于ajax请求的状况下仍然聊胜于无，但这并不是无解的，和Redux的合作便可以相对完美地解决这个问题。">
+<meta name="keywords" content="--react  redux  server  render">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【React&#x2F;Redux】深入理解React服务端渲染">
+<meta property="og:url" content="http://ZheningLin.github.io/2019/02/27/react-server-render/index.html">
+<meta property="og:site_name" content="Jacob&#39;s Notes">
+<meta property="og:description" content="React的前端单页应用对SEO并不友好，并且由于首屏渲染依赖于ajax所以在JS禁用状态下基本也就废了，所以我们需要利用服务端渲染（Server side rendering）来对首屏进行优化。虽然React官方提供服务端渲染的API，React-router也支持，但在渲染依赖于ajax请求的状况下仍然聊胜于无，但这并不是无解的，和Redux的合作便可以相对完美地解决这个问题。">
+<meta property="og:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-server-render/bg.jpg">
+<meta property="og:updated_time" content="2019-02-27T15:54:28.432Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【React&#x2F;Redux】深入理解React服务端渲染">
+<meta name="twitter:description" content="React的前端单页应用对SEO并不友好，并且由于首屏渲染依赖于ajax所以在JS禁用状态下基本也就废了，所以我们需要利用服务端渲染（Server side rendering）来对首屏进行优化。虽然React官方提供服务端渲染的API，React-router也支持，但在渲染依赖于ajax请求的状况下仍然聊胜于无，但这并不是无解的，和Redux的合作便可以相对完美地解决这个问题。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-server-render/bg.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '7TPGXTD83V',
+      apiKey: '3c064d4a40968fd9c426dab1bb9ed2ab',
+      indexName: 'test',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://ZheningLin.github.io/2019/02/27/react-server-render/"/>
+
+
+
+
+
+  <title>【React/Redux】深入理解React服务端渲染 | Jacob's Notes</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d8e4fd1e3f6fbb2379d52ea3f14d4e13";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jacob's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Quick notes</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://ZheningLin.github.io/2019/02/27/react-server-render/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jacob">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jacob's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【React/Redux】深入理解React服务端渲染</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-27T23:23:37+08:00">
+                2019-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/日志-二级目录/" itemprop="url" rel="index">
+                    <span itemprop="name">-日志 -二级目录</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/27/react-server-render/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2019/02/27/react-server-render/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/02/27/react-server-render/" class="leancloud_visitors" data-flag-title="【React/Redux】深入理解React服务端渲染">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://raw.githubusercontent.com/ZheningLin/ZheningLin.github.io/master/images/react-server-render/bg.jpg" alt="效果图"></p>
+<p>React的前端单页应用对SEO并不友好，并且由于首屏渲染依赖于ajax所以在JS禁用状态下基本也就废了，所以我们需要利用服务端渲染（Server side rendering）来对首屏进行优化。虽然React官方提供服务端渲染的API，React-router也支持，但在渲染依赖于ajax请求的状况下仍然聊胜于无，但这并不是无解的，和Redux的合作便可以相对完美地解决这个问题。<br><a id="more"></a></p>
+<h1 id="一、问题"><a href="#一、问题" class="headerlink" title="一、问题"></a>一、问题</h1><p>如果没有服务端渲染，那么一个React架构的SPA的渲染是这样的：</p>
+<blockquote>
+<p>客户端请求资源 -&gt; 返回index.html模板 -&gt; 请求js文件并加载 -&gt; React执行，挂载组件 -&gt; 进入路由 -&gt; 一些根据组件生命周期而做的初始化操作 -&gt; 渲染组件</p>
+</blockquote>
+<p>在这种模式下，一开始客户端只会收到一个只有架子、没有内容的Html文件，等待js文件加载完毕后才会执行后续操作并渲染出期望中的页面。这也就是说，无论是哪个路由下的页面，一开始都会先进入index.html这个入口，然后再客户端进行接下来的渲染，这对于大部分用户确实是没有什么问题，但对于部分场景和搜索引擎就不是这样了。</p>
+<h2 id="1-1-JS被禁用"><a href="#1-1-JS被禁用" class="headerlink" title="1.1 JS被禁用"></a>1.1 JS被禁用</h2><p>主要是JS被禁用的场景，比如是微信，在某些情况下，你在微信分享的页面可能会被判定为广告页面，在不做认证（备案）的情况下，JS脚本会被禁用，这会使得后续的渲染都无法执行。</p>
+<h2 id="2-2-SEO"><a href="#2-2-SEO" class="headerlink" title="2.2 SEO"></a>2.2 SEO</h2><p>SEO相较前面是更为严重和急迫的问题，搜索引擎这个绝大多数网站的主要流量入口，如果不加以重视，除非网站是故意不想被曝光，否则是一笔很大的损失。而根据前面的介绍不难得知，如果每次都将index.html作为入口，利用JS和ajax来渲染，搜索引擎是基本无法获得你的真正页面内容的，除了下面这个粗暴的解决方案。</p>
+<h1 id="二、一个粗暴的解决方案"><a href="#二、一个粗暴的解决方案" class="headerlink" title="二、一个粗暴的解决方案"></a>二、一个粗暴的解决方案</h1><p>这也是我上次重构最终选择的方案，对于一些搜索引擎（谷歌明确支持，必应似乎近期也支持了，百度万年技术最差不用等了），有着明确的对ajax页面的一个折中解决方案，我们可以在index.html的head里加上这么一句：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"fragment"</span> <span class="attr">content</span>=<span class="string">"!"</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>搜索引擎解析出这个meta信息后，便会在原始url后面加上一个?_escaped<em>fragment</em>来再次发起请求，这时候我们只需要在服务端备好另一套SEO专用的页面返回给其即可。这种方法虽然有效，但本质上还是要求我们另外准备一套界面，并且这一套和原来的代码还不能复用。比如，我在那时候就是专门写了一套jade模板来做SEO：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Express.js的中间件</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">SEO</span>(<span class="params">req, res, next</span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> escapedFragment = req.query._escaped_fragment_;</div><div class="line">    <span class="keyword">if</span> (escapedFragment) &#123;</div><div class="line">        <span class="keyword">const</span> parsedUrl = url.parse(req.url);</div><div class="line">        <span class="keyword">const</span> rdPath = <span class="string">`/<span class="subst">$&#123;jade&#125;</span>/parsedUrl.pathname`</span>;</div><div class="line">        logInfo(<span class="string">"Redirect: from"</span>, req.path, <span class="string">"to "</span>, rdPath);</div><div class="line">        <span class="keyword">return</span> res.redirect(rdPath);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> next();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这相当于将工作量翻了两倍。不仅如此，这还会使得server更加复杂，对于我这个Blog项目，这种妥协似乎还勉强可以接受，但对于一个复杂一些的网站就不是这样了，我们必须用一种新的方法来用最少的代码解决这个问题。</p>
+<h1 id="三、React服务端渲染"><a href="#三、React服务端渲染" class="headerlink" title="三、React服务端渲染"></a>三、React服务端渲染</h1><p>React+React-router+Redux便是解决这个问题的一套相对的完美的方案，虽然我们还是要对一些渲染逻辑做修改，但相较别的方案，仍然好得多。</p>
+<h2 id="3-1-ReactDom"><a href="#3-1-ReactDom" class="headerlink" title="3.1 ReactDom"></a>3.1 ReactDom</h2><p>React提供了一个API用于将虚拟DOM树在服务端环境下进行渲染，这个API是ReactDom/server中的renderToString。这个方法接受一个虚拟DOM树，并返回一个渲染后的HTML字符串，例如我有一个根级组件Root，我便可以使用下列语句得到结果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123;renderToString&#125; <span class="keyword">from</span> <span class="string">'ReactDom/server'</span>;</div><div class="line"><span class="keyword">const</span> markup = renderToString(</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">Root</span> /&gt;</span></span></div><div class="line">);</div></pre></td></tr></table></figure>
+<p>markup即为渲染后的结果。renderToString这个方法是服务端渲染的基础，但如果只是单纯这样使用，那么基本等于将React作为一个复杂很多的模板语言来写而已，因为这个渲染并不会理会任何的ajax请求，也不会根据url来做任何路由，它只会在第一次render方法调用后结束。这也就是说render方法之后的所有生命周期函数都不会被触发，再一次服务端渲染中，只有constructor、componentWillMount和render会被各触发一次，并且在期间使用setState也是没有意义的。</p>
+<p>这显然不是我们期望的，为了愉快得满足我们的须有，这里有两个问题需要解决：</p>
+<p>1.路由。<br>2.ajax请求。</p>
+<h2 id="3-2-React-router"><a href="#3-2-React-router" class="headerlink" title="3.2 React-router"></a>3.2 React-router</h2><p>正如上一篇文章所言，路由问题可以交由React-router解决。它提供了一系列方法来在服务端捕获请求参数，并和renderToString结合来渲染出路由最终对应的组件，其基本原理是通过一个match方法来根据客户端请求的url解析出已经定义好的routes的props，解析结果是error（错误）、redirectLocation（如果有重定向）和renderPorps（正常状况下解析到的props），我们只需要根据这些参数来执行对应的操作即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123;match, RouterContext&#125; <span class="keyword">from</span> <span class="string">'react-router'</span>;</div><div class="line"><span class="keyword">import</span> routes <span class="keyword">from</span> <span class="string">'../src/routes'</span>;</div><div class="line">match(&#123;routes, <span class="attr">location</span>: req.url&#125;, (error, redirectLocation, renderProps) =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (error) &#123;</div><div class="line">        logError(<span class="string">'Match routes failed: '</span>, error, error.stack);</div><div class="line">        <span class="keyword">return</span> res.status(<span class="number">500</span>).sendFile(config.error50xFile);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (redirectLocation) &#123;</div><div class="line">        logError(<span class="string">'Match routes redirectLocation: '</span>, redirectLocation);</div><div class="line">        <span class="keyword">return</span> res.redirect(<span class="number">302</span>, <span class="string">`<span class="subst">$&#123;redirectLocation.pathname&#125;</span><span class="subst">$&#123;redirectLocation.search&#125;</span>`</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (renderProps) &#123;</div><div class="line">        <span class="keyword">return</span> render(req, res, renderProps);</div><div class="line">    &#125;</div><div class="line">    logError(<span class="string">'Miss match routes: '</span>, error, error.stack);</div><div class="line">    <span class="keyword">return</span> res.status(<span class="number">404</span>).sendFile(config.error404File);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>除了前两种特殊情况和最后没有匹配到执行的404响应，一般情况下我们都会进入到render这个方法中根据renderProps来进行正常状况下的响应。renderProps的结构如下（以blog项目，并以当前这个页面的路由为例）：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    routes: [</div><div class="line">        &#123;path: '/', component: APP, ......&#125;</div><div class="line">        &#123;path: 'article/:name', components: &#123;content: Article&#125;&#125;</div><div class="line">    ],</div><div class="line">    params: [name: Skill-2016_10_11_a'],</div><div class="line">    location: &#123;</div><div class="line">        pathname: '/article/Skill-2016_10_09_a',</div><div class="line">        ......</div><div class="line">    &#125;,</div><div class="line">    components: [</div><div class="line">        &#123;</div><div class="line">            [Function: Connect] displayName: 'Connect(APP)',</div><div class="line">            ......</div><div class="line">        &#125;,</div><div class="line">        &#123;content: Article&#125;</div><div class="line">    ],</div><div class="line">    history: &#123;......&#125;,</div><div class="line">    router: &#123;......&#125;,</div><div class="line">    matchContext: &#123;......&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里面对我们有用的信息很多，但如果只是单纯用React-router配合来做服务端渲染，我们并不用了解这些，而是直接把renderProps传给待渲染的组件即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123;renderToString&#125; <span class="keyword">from</span> <span class="string">'react-dom/server'</span>;</div><div class="line"><span class="keyword">import</span> &#123;match, RouterContext&#125; <span class="keyword">from</span> <span class="string">'react-router'</span>;</div><div class="line"><span class="keyword">const</span> markup = renderToString(</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">RouterContext</span> &#123;<span class="attr">...renderProps</span>&#125; /&gt;</span></span></div><div class="line">);</div></pre></td></tr></table></figure>
+<p>通过使用RouterContext，我们便得到了和客户端渲染时相似的Router组件，将其作为根组件并传入renderProps，再调用renderToString，一次具有路由的服务端渲染便完成。在此例中，它最终会返回主要区域是Article组件的真实DOM。</p>
+<p>通过和React-router的结合，我们解决了第一个、也是相对容易的问题，但这仍然无法解决ajax调用的问题，这时候，Redux就该出场了。</p>
+<h2 id="3-3-Redux"><a href="#3-3-Redux" class="headerlink" title="3.3 Redux"></a>3.3 Redux</h2><p>Redux配合React进行服务端渲染的教程已经有许多，但这些教程大都不过是官网那篇例子的搬运，例子中所述方法的基本思想如下：</p>
+<h3 id="3-3-1-基本思想"><a href="#3-3-1-基本思想" class="headerlink" title="3.3.1 基本思想"></a>3.3.1 基本思想</h3><p>首先要明确我们真正的问题是什么，由于服务端渲染只会走一遍生命周期，并且在第一次render后便会停止，所以想要真正渲染出最终的页面，我们必须在第一次渲染前就将状态准备好我们期望中的状态，这也就是说，我们必须要有一次超前的ajax请求实现获取状态，然后来根据这个状态渲染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">serverSideRender</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">    request.get(url)</div><div class="line">    .then(<span class="function"><span class="params">response</span> =&gt;</span> normalRender(res, response))</div><div class="line">    .catch(<span class="function"><span class="params">err</span> =&gt;</span> render500(res, err))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在自己定义的normalRender这个方法里，我们可以通过Redux提供的createStore方法的第二个参数来进行创建带有初始状态的store，然后将这个状态送入根组件，并执行后续的渲染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">normalRender</span>(<span class="params">res, response</span>) </span>&#123;</div><div class="line">    <span class="comment">// 假设response的响应体中就包含了所有状态信息</span></div><div class="line">    <span class="keyword">const</span> initState = response.body;</div><div class="line">    <span class="keyword">const</span> store = createStore(reducers, initState);</div><div class="line">    <span class="keyword">const</span> markup = renderToString(</div><div class="line">        <span class="xml"><span class="tag">&lt;<span class="name">Provider</span> <span class="attr">store</span>=<span class="string">&#123;store&#125;</span>&gt;</span></span></div><div class="line">            <span class="tag">&lt;<span class="name">APP</span> /&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">Provider</span>&gt;</span></div><div class="line">    );</div><div class="line">    <span class="comment">// 将markup和最终的state塞到模板内渲染，这个模板取决于使用的模板引擎，也可以直接字符串替换</span></div><div class="line">    <span class="keyword">return</span> res.render(template, &#123;</div><div class="line">        markup,</div><div class="line">        <span class="attr">finalState</span>: store.getState().toJSON()</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个方法以响应结果为初始化状态渲染DOM，并将渲染后的结果塞入模板，值得注意的是，渲染参数里面有个finalState，这是初次渲染后、store的最终状态，我们需要将其序列化后强制写到返回的HTML的script标签中，将其赋予一个、例如叫initState的变量中，这样最终返回的HTML结构如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">        ......</div><div class="line">        <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">window</span>.initState = &#123;&#123;finalState&#125;&#125;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"react-container"</span>&gt;</span><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;&#123;markup&#125;&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>window.initState便拥有了我们服务端渲染后的状态，如此，客户端便有了一个途径来根据这个状态来初始化客户端的store，并接续接下来的操作，这实质上是完成了服务端和客户端之间状态的对接：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> store = createStore(reducers, <span class="built_in">window</span>.initState);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>特别注意，在将markup写入模板时我在React顶层DOM中又插入了一层div，这是为了解决一个特殊的警告，详细请看这里：<a href="https://stackoverflow.com/questions/33521047/warning-react-attempted-to-reuse-markup-in-a-container-but-the-checksum-was-inv" target="_blank" rel="external">Warning: React attempted to reuse markup in a container but the checksum was invalid</a>。</p>
+</blockquote>
+<p>要注意，我们可以延续状态，并非说Redux可以直接帮我们解决重复渲染的问题，无论如何，在每次重新执行初始渲染的时候，组件的生命周期还是会走一遍，如果阻止重复ajax请求、重复渲染，就是我们要在逻辑里自己把握的事情了，比如，我们的state里如果有一个字段是list，而这个list在这个应用的一次访问中只会初始化一次，那么我们便可以在初始化它的action中这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getList</span>(<span class="params">currentList</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (!currentList.isEmpty()) &#123;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么list便不会被二次初始化，也不会进行进一步的无效渲染。</p>
+<p>这样，官方建议的服务端渲染便完成。但这其实有另外两个问题，一个是路由的问题，还有一个，按照这种说法，我们难道要写另一套专门的逻辑来在渲染前初始化状态？一个两个状态还好，但一般SPA都不会只有这么点，而且这种ajax请求我们一般都会写在专门的action中，并在action成功或失败后交给ruducer，这些代码难道不能复用吗？客户端和服务端的同构化开发就不能实现吗？</p>
+<p>当然可以。</p>
+<h3 id="3-3-2-路由"><a href="#3-3-2-路由" class="headerlink" title="3.3.2 路由"></a>3.3.2 路由</h3><p>和React-router的结合实际上不是Redux的问题，而是React-router自身的问题，其核心在于如何根据匹配后的renderProps来获取用于初始化状态的信息，在上面一章我们已经拿到了renderProps的详细信息，接下来便可以妥善地利用这些信息。</p>
+<p>虽然如何利用它们取决于项目的设计，但一个显而易见的策略是利用匹配后的params来作为根据进行ajax请求来获取初始数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> &#123;params&#125; = renderProps;</div><div class="line"><span class="keyword">const</span> &#123;type, name&#125; = params;</div><div class="line">request.get(<span class="string">`<span class="subst">$&#123;backendHost&#125;</span>/<span class="subst">$&#123;type&#125;</span>/<span class="subst">$&#123;name&#125;</span>`</span>)</div><div class="line">......</div></pre></td></tr></table></figure>
+<p>这只是一个例子，表明如何根据信息来获取响应数据来初始化状态。</p>
+<p>在这个Blog项目中，我采用了一些特别的方法来进行这一步的操作。在我定义一个和路由相关的组件，比如Article时，我会为其赋予静态变量type：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">Article</span> <span class="keyword">extends</span> <span class="title">Base</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> type = <span class="string">'article'</span>;</div><div class="line">    ......</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>再加上上面分析的内容，我们可以从renderProps.components[1].content（content是该路由对应的组件，在此处是Article，请见上一篇文章）中拿到这个type:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> &#123;type&#125; = renderProps.components[<span class="number">1</span>].content;</div></pre></td></tr></table></figure>
+<p>然后根据这个type进行接下来的操作即可。</p>
+<h3 id="3-3-3-进阶"><a href="#3-3-3-进阶" class="headerlink" title="3.3.3 进阶"></a>3.3.3 进阶</h3><p>有了路由和基础的服务端渲染，要解决的问题便只剩同构化开发、避免多余代码的同构开发问题。这个问题解决的核心在于——store在渲染过程中是可变的，并且在服务端渲染进行过程中，有一个componentWillMount的阶段可供我们和客户端平等使用。这二者是接下来内容的基础。</p>
+<p>由于componentWillMount会在服务端渲染过程中执行，并且执行时this.props中的内容已经根据路由信息被修改，我们可以将ajax请求放入其中：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">componentWillMount() &#123;</div><div class="line">    <span class="keyword">const</span> &#123;dispatch, params&#125; = <span class="keyword">this</span>.props;</div><div class="line">    <span class="keyword">const</span> &#123;type, name&#125; = params;</div><div class="line">    dispatch(getList(type, name));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们可以在其中执行任意个ajax请求，由于store是可改变的，所以在请求结束后、reducer生效后将会我们便可以取到完整的、初始化过的store。也就是说，我们只要如此写好组件的生命周期，而后进行正常的服务端渲染，然后只需等待便可以得到一个初始化后的store，随后只需要将这个store作为初始化数据送入模板即可。</p>
+<p>这听起来是不是很简单？确实很简单，但仍然有一点需要注意——ajax请求时异步的，一次服务端渲染结束后，并不代表ajax请求就结束了，我们仍然需要一些方法来确定所哟请求确实结束，这里就需要一点设计了——我们可以在store中创建一个state专门用于表示初始化是否结束，并配以相应的action和reducer来修改它：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">componentWillMount() &#123;</div><div class="line">    <span class="keyword">const</span> &#123;dispatch, params&#125; = <span class="keyword">this</span>.props;</div><div class="line">    <span class="keyword">const</span> &#123;type, name&#125; = params;</div><div class="line">    dispatch(getList(type, name))</div><div class="line">        .then(<span class="function"><span class="params">()</span> =&gt;</span> dispatch(&#123;<span class="attr">type</span>: actionTypes.init.all.successful&#125;))</div><div class="line">        .catch(<span class="function"><span class="params">()</span> =&gt;</span> dispatch(&#123;<span class="attr">type</span>: actionTypes.init.all.failed&#125;));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如此，我们便可以不断检查store.getState().state.initDone来确定所有请求是否结束：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">responseWithCheck</span>(<span class="params">res, store, renderProps</span>) </span>&#123;</div><div class="line">    setImmediate(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">        <span class="keyword">if</span> (!store.getState().state.get(<span class="string">'initDone'</span>)) &#123;</div><div class="line">            <span class="keyword">return</span> setImmediate(responseWithCheck, res, store, renderProps);</div><div class="line">        &#125;</div><div class="line">        ......</div><div class="line">        return res.render(......);</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>setImmediate方法用于设置一个定时任务，此定时任务将在下一次mainLoop中被触发。</p>
+</blockquote>
+<p>这样，我们便可以在基本不添加多余逻辑的情况下复用客户端代码。但这样还是有问题没有被解决，我们送到客户端的仍然只是一堆状态加上等待初始化的页面，所以还需要更近一步。</p>
+<h3 id="3-3-4-二次渲染"><a href="#3-3-4-二次渲染" class="headerlink" title="3.3.4 二次渲染"></a>3.3.4 二次渲染</h3><p>想要让服务端直接渲染出初始化store后的完整页面，方法很简单，只需要把第一次渲染后的finalState作为初始状态进行二次渲染即可：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> store = createStore(reducers, finalState);</div><div class="line"><span class="keyword">const</span> markup = renderToString(</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">Provider</span> <span class="attr">store</span>=<span class="string">&#123;store&#125;</span>&gt;</span></span></div><div class="line">        <span class="tag">&lt;<span class="name">APP</span> /&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">Provider</span>&gt;</span></div><div class="line">);</div></pre></td></tr></table></figure>
+<p>如果设计足够规范，做了上述getList那样的检查，第二次渲染时是不会进行再次请求的，而是直接根据finalState渲染出真正的首屏页面。</p>
+<blockquote>
+<p>store的dispatch方法在服务端同样可以使用，我们可以直接用store.dispatch来触发某些action来满足一些特别的需求。</p>
+</blockquote>
+<p>至此，一个完整的、SEO友好的服务端渲染便已完成，但这样还是会有问题——客户端的方便是以服务端的消耗为代价的，客户端的每次请求都会导致服务端重新进行两次渲染和伴随的若干次ajax请求，这并不是我们期望的，所以这里就要用到Memory cache来缓存store和渲染后的页面。</p>
+<p>本文引用自 <a href="https://zhuanlan.zhihu.com/p/22875338" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/22875338</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react-redux-server-render/" rel="tag"># --react  redux  server  render</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/26/react-css-modules/" rel="next" title="CSS Modules 详解及 React 中实践">
+                <i class="fa fa-chevron-left"></i> CSS Modules 详解及 React 中实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jacob" />
+          <p class="site-author-name" itemprop="name">Jacob</p>
+           
+              <p class="site-description motion-element" itemprop="description">记录生活点滴</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/your-user-name" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/your-user-name" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/your-user-name" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/your-user-name" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、问题"><span class="nav-text">一、问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-JS被禁用"><span class="nav-text">1.1 JS被禁用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-SEO"><span class="nav-text">2.2 SEO</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、一个粗暴的解决方案"><span class="nav-text">二、一个粗暴的解决方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、React服务端渲染"><span class="nav-text">三、React服务端渲染</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-ReactDom"><span class="nav-text">3.1 ReactDom</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-React-router"><span class="nav-text">3.2 React-router</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-Redux"><span class="nav-text">3.3 Redux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-基本思想"><span class="nav-text">3.3.1 基本思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-2-路由"><span class="nav-text">3.3.2 路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-3-进阶"><span class="nav-text">3.3.3 进阶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-4-二次渲染"><span class="nav-text">3.3.4 二次渲染</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jacob</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://ZheningLin.github.io/2019/02/27/react-server-render/';
+          this.page.identifier = '2019/02/27/react-server-render/';
+          this.page.title = '【React/Redux】深入理解React服务端渲染';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("p66dtkiI4ISfwBtjQrYYOuGg-gzGzoHsz", "5gyWux8Xrw1X9920CkoKBueE");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
